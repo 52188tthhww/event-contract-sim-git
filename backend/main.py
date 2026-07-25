@@ -20,7 +20,7 @@ from config import (
     CANDLE_INTERVAL,
 )
 from state import app_state
-from db import init_db, save_report, get_db, save_locked_strategies, load_locked_strategies
+from db import init_db, save_report, get_db, save_locked_strategies, load_locked_strategies, save_tick
 from gate_client import fetch_ticker, fetch_candles, get_data_source_info, on_source_change, ws_price_stream
 from backtest import evaluate_all, evaluate_all_dual
 from strategies import STRATEGIES
@@ -39,6 +39,11 @@ async def price_poller():
                 if tick:
                     app_state["prices"][sym] = tick["price"]
                     app_state.setdefault("mark_prices", {})[sym] = tick.get("mark_price", tick["price"])
+                    try:
+                        db = await get_db()
+                        await save_tick(db, sym, tick["price"], int(time.time()))
+                    except Exception:
+                        pass
             _pf = 0
             if app_state["status"] == "PAUSED" and not app_state["pending_confirm"]:
                 app_state["status"] = "RUNNING"
