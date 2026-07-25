@@ -81,6 +81,8 @@ async def init_db():
             )
         """)
 
+        await db.execute("PRAGMA journal_mode=WAL")
+        await db.execute("PRAGMA synchronous=NORMAL")
         await db.commit()
 
 
