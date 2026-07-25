@@ -155,8 +155,7 @@ export default function SimAccount() {
     } catch (_) {}
   }, []);
 
-  // 首次加载：拉取价格历史数据
-  const [histReady, setHistReady] = useState(false);
+  // 首次加载：后台拉取价格历史（不阻塞实时轮询）
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -168,7 +167,6 @@ export default function SimAccount() {
         if (cancelled) return;
         const btcH = (btcRes.data.data || []).map(p => ({ time: p.ts * 1000, BTC_USDT: p.price }));
         const ethH = (ethRes.data.data || []).map(p => ({ time: p.ts * 1000, ETH_USDT: p.price }));
-        // 合并
         const merged = [];
         let bi = 0, ei = 0;
         while (bi < btcH.length || ei < ethH.length) {
@@ -180,20 +178,22 @@ export default function SimAccount() {
             bi++; if (bt.time === et.time) ei++;
           } else { merged.push({ ...et, BTC_USDT: bt.BTC_USDT }); ei++; }
         }
-        if (!cancelled) setPriceData(merged.slice(-300));
+        if (!cancelled) setPriceData(prev => {
+          const prevTimes = new Set(prev.map(p => p.time));
+          const newData = merged.filter(p => !prevTimes.has(p.time));
+          return [...prev, ...newData].sort((a, b) => a.time - b.time).slice(-300);
+        });
       } catch (_) {}
-      if (!cancelled) setHistReady(true);
     })();
     return () => { cancelled = true; };
   }, []);
 
-  // 实时轮询（历史加载完后开始）
+  // 实时轮询（立刻开始，不等待历史）
   useEffect(() => {
-    if (!histReady) return;
     refresh();
     const iv = setInterval(refresh, 2000);
     return () => clearInterval(iv);
-  }, [refresh, histReady]);
+  }, [refresh]);
 
   // 首次加载拉取 DB 历史（refresh 里只在平仓变化时拉）
   useEffect(() => {
