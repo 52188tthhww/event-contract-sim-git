@@ -409,6 +409,11 @@ app.add_middleware(
 
 
 # ───────────────────── 请求模型 ─────────────────────
+# ── 扩展：观测池 ──
+from ext_state import extend_state
+extend_state()
+from ext_routes import register_observation_routes
+register_observation_routes(app)
 
 class BacktestReq(BaseModel):
     symbol: str = "BTC_USDT"
