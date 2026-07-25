@@ -5,6 +5,10 @@ import {
 } from 'recharts';
 import { pollAll, control, updateSettings, unlockStrategy, getHistory, autoLockStart, autoLockStop, autoLockStatus, autoLockSettings } from '../api';
 import ObservationPool from './ObservationPool';
+import axios from 'axios';
+
+const API = process.env.REACT_APP_API ?? '';
+const histHttp = axios.create({ baseURL: API, timeout: 30000 });
 
 const COLORS = { BTC_USDT: '#f7931a', ETH_USDT: '#627eea' };
 const LABELS = { BTC_USDT: 'BTC/USDT', ETH_USDT: 'ETH/USDT' };
@@ -151,11 +155,45 @@ export default function SimAccount() {
     } catch (_) {}
   }, []);
 
+  // 首次加载：拉取价格历史数据
+  const [histReady, setHistReady] = useState(false);
   useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const [btcRes, ethRes] = await Promise.all([
+          histHttp.get('/prices/history', { params: { symbol: 'BTC_USDT', hours: 1 } }),
+          histHttp.get('/prices/history', { params: { symbol: 'ETH_USDT', hours: 1 } }),
+        ]);
+        if (cancelled) return;
+        const btcH = (btcRes.data.data || []).map(p => ({ time: p.ts * 1000, BTC_USDT: p.price }));
+        const ethH = (ethRes.data.data || []).map(p => ({ time: p.ts * 1000, ETH_USDT: p.price }));
+        // 合并
+        const merged = [];
+        let bi = 0, ei = 0;
+        while (bi < btcH.length || ei < ethH.length) {
+          const bt = btcH[bi], et = ethH[ei];
+          if (!bt) { merged.push(et); ei++; }
+          else if (!et) { merged.push(bt); bi++; }
+          else if (bt.time <= et.time) {
+            merged.push({ ...bt, ETH_USDT: et.ETH_USDT });
+            bi++; if (bt.time === et.time) ei++;
+          } else { merged.push({ ...et, BTC_USDT: bt.BTC_USDT }); ei++; }
+        }
+        if (!cancelled) setPriceData(merged.slice(-300));
+      } catch (_) {}
+      if (!cancelled) setHistReady(true);
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  // 实时轮询（历史加载完后开始）
+  useEffect(() => {
+    if (!histReady) return;
     refresh();
     const iv = setInterval(refresh, 2000);
     return () => clearInterval(iv);
-  }, [refresh]);
+  }, [refresh, histReady]);
 
   // 首次加载拉取 DB 历史（refresh 里只在平仓变化时拉）
   useEffect(() => {
