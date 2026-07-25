@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API = process.env.REACT_APP_API || 'http://localhost:8000';
+const API = process.env.REACT_APP_API ?? '';
 
 // 共享 axios 实例 — keep-alive + 超时 + 重试
 const http = axios.create({

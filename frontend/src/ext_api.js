@@ -3,7 +3,7 @@
  */
 import axios from 'axios';
 
-const API = process.env.REACT_APP_API || 'http://localhost:8000';
+const API = process.env.REACT_APP_API ?? '';
 const http = axios.create({ baseURL: API, timeout: 120000 });
 
 const silent = (fn) => fn().catch(() => null);

@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { getPoolStats, resetPool, lockStrategy, unlockStrategy } from '../ext_api';
 import axios from 'axios';
 
-const API = process.env.REACT_APP_API || 'http://localhost:8000';
+const API = process.env.REACT_APP_API ?? '';
 
 export default function ObservationPool({ onLockChange }) {
   const [pool, setPool] = useState({ stats: {}, open_count: 0, closed_count: 0 });
