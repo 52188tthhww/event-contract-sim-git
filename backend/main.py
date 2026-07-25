@@ -471,7 +471,7 @@ async def poll_all():
     # 从 DB 聚合每策略 W/L（缓存 30 秒，只统计锁定后的交易）
     now = time.time()
     cached = app_state.get("_strategy_stats_cache")
-    if not cached or now - cached.get("_ts", 0) > 30:
+    if not cached or now - cached.get("_ts", 0) > 120:
         sst = {}
         # 收集所有锁定策略的 locked_at 时间
         locked_since = {}
@@ -561,9 +561,21 @@ async def get_price_history(
 # ── 回测 ──
 
 @app.get("/reports")
-def get_reports():
+def get_reports(summary: bool = True):
+    reports = app_state["last_reports"]
+    if summary and reports:
+        reports = [
+            {
+                "symbol": r["symbol"],
+                "reports": [
+                    {k: v for k, v in rep.items() if k != "trades"}
+                    for rep in r["reports"]
+                ]
+            }
+            for r in reports
+        ]
     return {
-        "reports": app_state["last_reports"],
+        "reports": reports,
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
 
