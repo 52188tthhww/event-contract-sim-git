@@ -4,6 +4,10 @@ import {
   CartesianGrid, Legend
 } from 'recharts';
 import { getPrices } from '../api';
+import axios from 'axios';
+
+const API = process.env.REACT_APP_API ?? '';
+const http = axios.create({ baseURL: API, timeout: 30000 });
 
 const COLORS = { BTC_USDT: '#f7931a', ETH_USDT: '#627eea' };
 const LABELS = { BTC_USDT: 'BTC/USDT', ETH_USDT: 'ETH/USDT' };
@@ -11,9 +15,67 @@ const LABELS = { BTC_USDT: 'BTC/USDT', ETH_USDT: 'ETH/USDT' };
 export default function PriceChart() {
   const [data, setData] = useState([]);
   const [metrics, setMetrics] = useState({});
+  const [historyLoaded, setHistoryLoaded] = useState(false);
   const timerRef = useRef(null);
 
+  // 首次加载：拉历史数据
   useEffect(() => {
+    let cancelled = false;
+    const loadHistory = async () => {
+      try {
+        const [btcRes, ethRes] = await Promise.all([
+          http.get('/prices/history', { params: { symbol: 'BTC_USDT', hours: 1 } }),
+          http.get('/prices/history', { params: { symbol: 'ETH_USDT', hours: 1 } }),
+        ]);
+        if (cancelled) return;
+
+        const btcHistory = (btcRes.data.data || []).map(p => ({
+          time: p.ts * 1000,
+          BTC_USDT: p.price,
+        }));
+        const ethHistory = (ethRes.data.data || []).map(p => ({
+          time: p.ts * 1000,
+          ETH_USDT: p.price,
+        }));
+
+        // 按时间合并 BTC 和 ETH 历史数据
+        const merged = [];
+        let bi = 0, ei = 0;
+        while (bi < btcHistory.length || ei < ethHistory.length) {
+          const bt = btcHistory[bi], et = ethHistory[ei];
+          if (!bt) { merged.push(et); ei++; }
+          else if (!et) { merged.push(bt); bi++; }
+          else if (bt.time <= et.time) {
+            merged.push({ ...bt, ETH_USDT: et.ETH_USDT });
+            bi++; if (bt.time === et.time) ei++;
+          } else {
+            merged.push({ ...et, BTC_USDT: bt.BTC_USDT });
+            ei++;
+          }
+        }
+        if (!cancelled) {
+          setData(merged.slice(-300));
+          // 初始化指标
+          const lastBtc = btcHistory[btcHistory.length - 1];
+          const lastEth = ethHistory[ethHistory.length - 1];
+          if (lastBtc || lastEth) {
+            setMetrics({
+              BTC_USDT: lastBtc ? { price: lastBtc.BTC_USDT, change: '0.000' } : undefined,
+              ETH_USDT: lastEth ? { price: lastEth.ETH_USDT, change: '0.000' } : undefined,
+            });
+          }
+        }
+      } catch (_) {}
+      if (!cancelled) setHistoryLoaded(true);
+    };
+    loadHistory();
+    return () => { cancelled = true; };
+  }, []);
+
+  // 实时轮询（历史加载完后开始）
+  useEffect(() => {
+    if (!historyLoaded) return;
+
     const fetchPrices = async () => {
       try {
         const res = await getPrices();
@@ -25,10 +87,9 @@ export default function PriceChart() {
             BTC_USDT: prices.BTC_USDT,
             ETH_USDT: prices.ETH_USDT,
           }];
-          return next.slice(-120); // 保留最近 120 个点（4 分钟）
+          return next.slice(-300); // 保留最近 300 个点
         });
 
-        // 更新指标
         setMetrics(prev => {
           const btc = prices.BTC_USDT;
           const eth = prices.ETH_USDT;
@@ -38,15 +99,13 @@ export default function PriceChart() {
             ETH_USDT: eth ? { price: eth, change: prev.ETH_USDT ? ((eth - prev.ETH_USDT.price) / prev.ETH_USDT.price * 100).toFixed(3) : '0.000' } : prev.ETH_USDT,
           };
         });
-      } catch (_) {
-        // 后端未启动时不报错
-      }
+      } catch (_) {}
     };
 
     fetchPrices();
     timerRef.current = setInterval(fetchPrices, 2000);
     return () => clearInterval(timerRef.current);
-  }, []);
+  }, [historyLoaded]);
 
   const formatTime = (ts) => {
     const d = new Date(ts);
