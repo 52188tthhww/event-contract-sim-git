@@ -81,7 +81,7 @@ export default function ObservationPool({ onLockChange }) {
     const wr = (d.wins / total * 100).toFixed(0);
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: +wr >= 50 ? '#3fb950' : '#f85149' }}>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: +wr >= 50 ? '#fff' : '#555' }}>
           {d.wins}W/{d.losses}L ({wr}%)
         </span>
         <button onClick={() => handleLock(sid, name, dur, 'BTC_USDT')}
@@ -111,13 +111,13 @@ export default function ObservationPool({ onLockChange }) {
           </button>
           <button onClick={handleReset}
             style={{ padding: '4px 10px', borderRadius: 'var(--radius-sm)', fontSize: 11, fontWeight: 600,
-              background: '#21262d', color: '#f85149', border: '1px solid var(--border)', cursor: 'pointer' }}>
+              background: '#21262d', color: '#555', border: '1px solid var(--border)', cursor: 'pointer' }}>
             🔄
           </button>
         </div>
       </div>
       {message && (
-        <div style={{ fontSize: 12, color: '#d29922', marginBottom: 6 }}>{message}</div>
+        <div style={{ fontSize: 12, color: '#888', marginBottom: 6 }}>{message}</div>
       )}
       <div style={{ maxHeight: 400, overflowY: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12, color: '#e6edf3' }}>

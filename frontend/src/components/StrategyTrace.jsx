@@ -81,7 +81,7 @@ export default function StrategyTrace({ report }) {
         </div>
         <div style={styles.statCard}>
           <div style={styles.statLabel}>胜率</div>
-          <div style={{ ...styles.statValue, color: report.win_rate >= 0.75 ? '#3fb950' : '#d29922' }}>
+          <div style={{ ...styles.statValue, color: report.win_rate >= 0.75 ? '#fff' : '#888' }}>
             {(report.win_rate * 100).toFixed(1)}%
           </div>
         </div>
@@ -98,7 +98,7 @@ export default function StrategyTrace({ report }) {
           <div style={styles.statLabel}>净盈亏</div>
           <div style={{
             ...styles.statValue,
-            color: report.net_pnl >= 0 ? '#3fb950' : '#f85149',
+            color: report.net_pnl >= 0 ? '#fff' : '#555',
           }}>
             {report.net_pnl >= 0 ? '+' : ''}{report.net_pnl.toFixed(4)}
           </div>
@@ -169,7 +169,7 @@ export default function StrategyTrace({ report }) {
                 {chartData.map((d, i) => (
                   <rect
                     key={i}
-                    fill={d.result === 'WIN' ? '#3fb950' : '#f85149'}
+                    fill={d.result === 'WIN' ? '#fff' : '#555'}
                     opacity={0.7}
                   />
                 ))}
@@ -218,7 +218,7 @@ export default function StrategyTrace({ report }) {
                 name="入场价"
                 stroke="#58a6ff"
                 strokeWidth={1.5}
-                dot={{ r: 3, fill: '#58a6ff' }}
+                dot={{ r: 3, fill: '#fff' }}
                 connectNulls
               />
               <Line
@@ -227,7 +227,7 @@ export default function StrategyTrace({ report }) {
                 name="出场价"
                 stroke="#d29922"
                 strokeWidth={1.5}
-                dot={{ r: 3, fill: '#d29922' }}
+                dot={{ r: 3, fill: '#888' }}
                 connectNulls
               />
               <Legend
@@ -269,7 +269,7 @@ export default function StrategyTrace({ report }) {
                   <td style={styles.td}>{toLocalShort(t.entry_time)}</td>
                   <td style={styles.td}>
                     <span style={{
-                      color: t.direction === 'UP' ? '#3fb950' : '#f85149',
+                      color: t.direction === 'UP' ? '#fff' : '#555',
                       fontWeight: 600,
                     }}>
                       {t.direction === 'UP' ? '📈 看涨' : '📉 看跌'}
@@ -281,7 +281,7 @@ export default function StrategyTrace({ report }) {
                   <td style={{
                     ...styles.td,
                     fontFamily: 'var(--font-mono)',
-                    color: t.pnl >= 0 ? '#3fb950' : '#f85149',
+                    color: t.pnl >= 0 ? '#fff' : '#555',
                     fontWeight: 600,
                   }}>
                     {t.pnl >= 0 ? '+' : ''}{t.pnl.toFixed(4)}
@@ -289,7 +289,7 @@ export default function StrategyTrace({ report }) {
                   <td style={{
                     ...styles.td,
                     fontFamily: 'var(--font-mono)',
-                    color: t.pnl_pct >= 0 ? '#3fb950' : '#f85149',
+                    color: t.pnl_pct >= 0 ? '#fff' : '#555',
                   }}>
                     {t.pnl_pct >= 0 ? '+' : ''}{t.pnl_pct.toFixed(4)}%
                   </td>
@@ -300,7 +300,7 @@ export default function StrategyTrace({ report }) {
                       fontSize: 11,
                       fontWeight: 600,
                       background: t.result === 'WIN' ? '#1a3a2a' : '#3a1a1a',
-                      color: t.result === 'WIN' ? '#3fb950' : '#f85149',
+                      color: t.result === 'WIN' ? '#fff' : '#555',
                     }}>
                       {t.result === 'WIN' ? '✅ WIN' : '❌ LOSE'}
                     </span>

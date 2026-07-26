@@ -9,7 +9,7 @@ import axios from 'axios';
 const API = process.env.REACT_APP_API ?? '';
 const http = axios.create({ baseURL: API, timeout: 30000 });
 
-const COLORS = { BTC_USDT: '#f7931a', ETH_USDT: '#627eea' };
+const COLORS = { BTC_USDT: '#fff', ETH_USDT: '#aaa' };
 const LABELS = { BTC_USDT: 'BTC/USDT', ETH_USDT: 'ETH/USDT' };
 
 // Tooltip component with better formatting
@@ -128,7 +128,7 @@ export default function PriceChart() {
               </div>
               <div style={{
                 ...styles.cardChange,
-                color: change >= 0 ? '#3fb950' : '#f85149',
+                color: change >= 0 ? '#fff' : '#555',
               }}>
                 {change >= 0 ? '↑' : '↓'} {Math.abs(change)}%
               </div>

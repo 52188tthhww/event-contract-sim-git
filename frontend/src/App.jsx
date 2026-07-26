@@ -69,11 +69,11 @@ function App() {
           <div style={styles.sourceBadge}>
             <span style={{
               ...styles.dot,
-              background: isLive ? '#3fb950' : '#d29922',
+              background: isLive ? '#fff' : '#888',
               boxShadow: isLive ? '0 0 6px #3fb95088' : '0 0 6px #d2992288',
               animation: isLive ? 'pulse 2s infinite' : 'none',
             }} />
-            <span style={{ color: isLive ? '#3fb950' : '#d29922', fontSize: 11, fontWeight: 600 }}>
+            <span style={{ color: isLive ? '#fff' : '#888', fontSize: 11, fontWeight: 600 }}>
               {isLive ? 'LIVE' : 'SIM'}
             </span>
           </div>
@@ -144,7 +144,7 @@ const styles = {
     flexWrap: 'wrap', gap: 12,
   },
   headerLeft: { display: 'flex', alignItems: 'center', gap: 12 },
-  title: { fontSize: 20, fontWeight: 700, color: '#e6edf3', letterSpacing: '-0.01em' },
+  title: { fontSize: 20, fontWeight: 700, color: '#fff', letterSpacing: '-0.01em' },
   sourceBadge: {
     display: 'flex', alignItems: 'center', gap: 5,
     background: 'var(--bg-card)', border: '1px solid var(--border)',
@@ -154,7 +154,7 @@ const styles = {
   headerRight: { display: 'flex', gap: 14 },
   ticker: { display: 'flex', alignItems: 'baseline', gap: 6 },
   tickerLabel: { fontSize: 10, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' },
-  tickerPrice: { fontSize: 14, fontWeight: 600, color: '#e6edf3' },
+  tickerPrice: { fontSize: 14, fontWeight: 600, color: '#fff' },
   tabs: {
     display: 'flex', gap: 4, padding: '14px 0',
     borderBottom: '1px solid var(--border)',
