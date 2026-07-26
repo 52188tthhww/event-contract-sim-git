@@ -60,9 +60,9 @@ export default function StrategyTrace({ report }) {
   };
   // 暗色主题 tooltip
   const tooltipStyle = {
-    background: 'var(--bg-card)',
+    background: 'var(--surface)',
     border: '1px solid var(--border)',
-    borderRadius: 'var(--radius-sm)',
+    borderRadius: 'var(--radius)',
     fontSize: 12,
     color: '#e6edf3',
   };
@@ -336,9 +336,9 @@ const styles = {
     marginBottom: 20,
   },
   statCard: {
-    background: 'var(--bg-card)',
+    background: 'var(--surface)',
     border: '1px solid var(--border)',
-    borderRadius: 'var(--radius)',
+    borderRadius: 'var(--radius-lg)',
     padding: '12px 16px',
   },
   statLabel: { fontSize: 11, color: 'var(--text-secondary)', marginBottom: 4 },
@@ -352,9 +352,9 @@ const styles = {
     marginBottom: 20,
   },
   chartBox: {
-    background: 'var(--bg-card)',
+    background: 'var(--surface)',
     border: '1px solid var(--border)',
-    borderRadius: 'var(--radius)',
+    borderRadius: 'var(--radius-lg)',
     padding: 20,
   },
   chartTitle: {
@@ -375,9 +375,9 @@ const styles = {
 
   // 明细表
   tableBox: {
-    background: 'var(--bg-card)',
+    background: 'var(--surface)',
     border: '1px solid var(--border)',
-    borderRadius: 'var(--radius)',
+    borderRadius: 'var(--radius-lg)',
     padding: 20,
   },
   scrollTable: {
@@ -393,7 +393,7 @@ const styles = {
   tableHeaderRow: {
     position: 'sticky',
     top: 0,
-    background: 'var(--bg-deep)',
+    background: 'var(--bg)',
     zIndex: 1,
   },
   th: {

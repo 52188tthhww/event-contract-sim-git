@@ -272,8 +272,8 @@ export default function SimAccount() {
   };
 
   const tooltipStyle = {
-    background: 'var(--bg-card)', border: '1px solid var(--border)',
-    borderRadius: 'var(--radius-sm)', fontSize: 12, color: '#e6edf3',
+    background: 'var(--surface)', border: '1px solid var(--border)',
+    borderRadius: 'var(--radius)', fontSize: 12, color: '#e6edf3',
   };
 
   return (
@@ -603,7 +603,7 @@ export default function SimAccount() {
       </div>
 
       {/* ═══════ 自动锁定策略 ═══════ */}
-      <div style={{ ...styles.section, background: autoLock.enabled ? '#1a2a1a' : '#161b22', border: autoLock.enabled ? '1px solid #3fb95055' : '1px solid #21262d', borderRadius: 'var(--radius)', padding: 14 }}>
+      <div style={{ ...styles.section, background: autoLock.enabled ? '#1a2a1a' : '#161b22', border: autoLock.enabled ? '1px solid #3fb95055' : '1px solid #21262d', borderRadius: 'var(--radius-lg)', padding: 14 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <h3 style={{ ...styles.sectionTitle, margin: 0 }}>🤖 自动锁定策略</h3>
@@ -642,7 +642,7 @@ export default function SimAccount() {
                 }
               }}
               style={{
-                padding: '6px 16px', borderRadius: 'var(--radius-sm)', fontWeight: 700, fontSize: 13, cursor: 'pointer',
+                padding: '6px 16px', borderRadius: 'var(--radius)', fontWeight: 700, fontSize: 13, cursor: 'pointer',
                 background: autoLock.enabled ? '#da3633' : '#333',
                 color: '#fff', border: 'none',
                 opacity: !autoLock.enabled && autoLockSelected.length === 0 ? 0.5 : 1,
@@ -661,7 +661,7 @@ export default function SimAccount() {
                 const strat = ds.active_strategy;
                 return (
                   <div key={d} style={{
-                    background: 'var(--bg-deep)', borderRadius: 'var(--radius-sm)', padding: '6px 12px',
+                    background: 'var(--bg)', borderRadius: 'var(--radius)', padding: '6px 12px',
                     border: `1px solid ${color}44`, minWidth: 150,
                   }}>
                     <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{d}分钟 · {label}</div>
@@ -750,7 +750,7 @@ export default function SimAccount() {
           const trendColor = trend === 'bull' ? '#fff' : trend === 'bear' ? '#555' : '#888';
           return (
             <div style={{
-              background: 'var(--bg-card)', border: `1px solid ${trendColor}44`, borderRadius: 'var(--radius)', padding: '10px 16px',
+              background: 'var(--surface)', border: `1px solid ${trendColor}44`, borderRadius: 'var(--radius-lg)', padding: '10px 16px',
               flex: 1, minWidth: 200,
             }}>
               <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginBottom: 2 }}>市场方向 (10分钟)</div>
@@ -763,7 +763,7 @@ export default function SimAccount() {
           );
         })()}
         <div style={{
-          background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '10px 16px',
+          background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '10px 16px',
           flex: 1, minWidth: 200,
         }}>
           <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginBottom: 2 }}>系统状态</div>
@@ -784,7 +784,7 @@ export default function SimAccount() {
             const wr = (st.win_rate || 0) * 100;
             return (
               <div key={d} style={{
-                background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '10px 16px',
+                background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '10px 16px',
                 flex: 1, minWidth: 140,
               }}>
                 <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginBottom: 2 }}>{d}分钟合约</div>
@@ -976,10 +976,10 @@ const PriceChartSection = memo(function PriceChartSection({ priceData, allPositi
 
   const COLORS = { BTC_USDT: '#fff', ETH_USDT: '#aaa' };
   const LABELS = { BTC_USDT: 'BTC/USDT', ETH_USDT: 'ETH/USDT' };
-  const tooltipStyle = { background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', fontSize: 12, color: '#e6edf3' };
+  const tooltipStyle = { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', fontSize: 12, color: '#e6edf3' };
 
   return (
-    <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: 16 }}>
+    <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: 16 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
         <h3 style={{ fontSize: 14, fontWeight: 600, margin: 0, color: COLORS[sym] }}>{LABELS[sym]}</h3>
         <span style={{ fontSize: 11, color: 'var(--text-secondary)', background: '#21262d', padding: '2px 8px', borderRadius: 10 }}>{markers.length} 笔标记</span>
@@ -1017,7 +1017,7 @@ const HistoryTable = memo(function HistoryTable({ history }) {
     <div style={{ maxHeight: 360, overflowY: 'auto' }}>
       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12, color: '#e6edf3' }}>
         <thead>
-          <tr style={{ position: 'sticky', top: 0, zIndex: 2, background: 'var(--bg-deep)' }}>
+          <tr style={{ position: 'sticky', top: 0, zIndex: 2, background: 'var(--bg)' }}>
             <th style={tStyle}>品种</th><th style={tStyle}>时长</th><th style={tStyle}>方向</th><th style={tStyle}>入场价</th><th style={tStyle}>入场时间</th><th style={tStyle}>出场价</th><th style={tStyle}>出场时间</th><th style={tStyle}>盈亏</th><th style={tStyle}>结果</th>
           </tr>
         </thead>
@@ -1046,7 +1046,7 @@ const tStyle = { padding: '6px 12px', borderBottom: '1px solid #21262d', whiteSp
 const EventLog = memo(function EventLog({ events }) {
   if (!events || events.length === 0) return <div style={{ textAlign: 'center', padding: 24, color: 'var(--text-muted)', fontSize: 13 }}>暂无事件</div>;
   return (
-    <div style={{ background: 'var(--bg-deep)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '10px 14px', maxHeight: 260, overflowY: 'auto', fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+    <div style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '10px 14px', maxHeight: 260, overflowY: 'auto', fontFamily: 'var(--font-mono)', fontSize: 12 }}>
       {events.slice().reverse().slice(0, 30).map((e, i) => (
         <div key={i} style={{ padding: '2px 0', display: 'flex', gap: 8, color: e.level === 'ERROR' ? '#555' : e.level === 'WARN' ? '#888' : '#8b949e' }}>
           <span style={{ color: 'var(--text-muted)', flexShrink: 0 }}>{e.ts?.slice(11, 19) || ''}</span>
@@ -1131,7 +1131,7 @@ const styles = {
   toast: {
     display: 'flex', alignItems: 'center', gap: 12,
     padding: '14px 18px', borderRadius: 10,
-    background: 'var(--bg-card)', border: '1px solid var(--border)',
+    background: 'var(--surface)', border: '1px solid var(--border)',
     fontSize: 13, color: '#e6edf3',
     boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
     animation: 'slideIn 0.3s ease',
@@ -1142,24 +1142,24 @@ const styles = {
   toastClose: { marginLeft: 'auto', background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: 14, cursor: 'pointer', padding: '2px 6px' },
 
   // 异常弹窗
-  alert: { display: 'flex', gap: 16, padding: '20px 24px', background: '#2a1f00', border: '1px solid #d29922', borderRadius: 'var(--radius)', marginBottom: 20 },
+  alert: { display: 'flex', gap: 16, padding: '20px 24px', background: '#2a1f00', border: '1px solid #d29922', borderRadius: 'var(--radius-lg)', marginBottom: 20 },
   alertIcon: { fontSize: 32 },
   alertBody: { flex: 1 },
   alertTitle: { fontSize: 16, fontWeight: 700, color: '#888', marginBottom: 8 },
   alertMsg: { fontSize: 13, color: '#e6edf3', marginBottom: 12, fontFamily: 'var(--font-mono)' },
   alertActions: { display: 'flex', gap: 10 },
-  confirmBtn: { padding: '8px 20px', background: '#333', color: '#fff', border: 'none', borderRadius: 'var(--radius-sm)', fontSize: 13, fontWeight: 600 },
-  abortBtn: { padding: '8px 20px', background: '#21262d', color: '#555', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', fontSize: 13 },
+  confirmBtn: { padding: '8px 20px', background: '#333', color: '#fff', border: 'none', borderRadius: 'var(--radius)', fontSize: 13, fontWeight: 600 },
+  abortBtn: { padding: '8px 20px', background: '#21262d', color: '#555', border: '1px solid var(--border)', borderRadius: 'var(--radius)', fontSize: 13 },
 
   // 指标
   overviewGrid: { display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12, marginBottom: 20 },
-  card: { background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '14px 18px' },
+  card: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '14px 18px' },
   cardLabel: { fontSize: 11, color: 'var(--text-secondary)', marginBottom: 4 },
   cardValue: { fontSize: 18, fontWeight: 700, fontFamily: 'var(--font-mono)' },
 
   // 行情图
   chartsGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 },
-  chartBox: { background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: 16 },
+  chartBox: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: 16 },
   chartHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
   chartTitle: { fontSize: 14, fontWeight: 600, margin: 0 },
   chartBadge: { fontSize: 11, color: 'var(--text-secondary)', background: '#21262d', padding: '2px 8px', borderRadius: 10 },
@@ -1171,24 +1171,24 @@ const styles = {
 
   // 控制面板（4 列）
   controlPanel: { display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 20 },
-  controlBlock: { background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '14px 18px' },
+  controlBlock: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '14px 18px' },
   sectionTitle: { fontSize: 13, fontWeight: 600, marginBottom: 10, color: '#e6edf3' },
   lockedGrid: { display: 'flex', gap: 8 },
-  lockedCard: { flex: 1, background: 'var(--bg-deep)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', padding: '8px 12px', transition: 'border-color 0.2s' },
+  lockedCard: { flex: 1, background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '8px 12px', transition: 'border-color 0.2s' },
   lockedDur: { fontSize: 10, color: 'var(--text-secondary)', marginBottom: 4 },
   lockedName: { fontSize: 13, fontWeight: 600 },
   lockedItem: {
     display: 'flex', alignItems: 'center', gap: 4,
     padding: '2px 4px', borderRadius: 3,
-    background: 'var(--bg-deep)',
+    background: 'var(--bg)',
   },
   lockedItemName: { fontSize: 11, fontWeight: 500, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
   symBadge: {
     fontSize: 9, fontWeight: 700, padding: '1px 4px', borderRadius: 2,
     fontFamily: 'var(--font-mono)', flexShrink: 0,
   },
-  setSelect: { padding: '2px 4px', background: 'var(--bg-deep)', color: '#e6edf3', border: '1px solid var(--border)', borderRadius: 3, fontSize: 11, marginLeft: 4 },
-  setInput: { padding: '2px 4px', background: 'var(--bg-deep)', color: '#e6edf3', border: '1px solid var(--border)', borderRadius: 3, fontSize: 11, width: 40, textAlign: 'center', marginLeft: 4 },
+  setSelect: { padding: '2px 4px', background: 'var(--bg)', color: '#e6edf3', border: '1px solid var(--border)', borderRadius: 3, fontSize: 11, marginLeft: 4 },
+  setInput: { padding: '2px 4px', background: 'var(--bg)', color: '#e6edf3', border: '1px solid var(--border)', borderRadius: 3, fontSize: 11, width: 40, textAlign: 'center', marginLeft: 4 },
   unlockItemBtn: {
     background: 'none', border: 'none', color: '#555',
     fontSize: 12, cursor: 'pointer', padding: '0 4px',
@@ -1202,19 +1202,19 @@ const styles = {
     opacity: 0.5,
   },
   controlRow: { display: 'flex', gap: 8 },
-  pauseBtn: { padding: '8px 20px', background: '#21262d', color: '#888', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', fontSize: 14, fontWeight: 600, cursor: 'pointer' },
-  resumeBtn: { padding: '8px 20px', background: '#333', color: '#fff', border: 'none', borderRadius: 'var(--radius-sm)', fontSize: 14, fontWeight: 600, cursor: 'pointer' },
+  pauseBtn: { padding: '8px 20px', background: '#21262d', color: '#888', border: '1px solid var(--border)', borderRadius: 'var(--radius)', fontSize: 14, fontWeight: 600, cursor: 'pointer' },
+  resumeBtn: { padding: '8px 20px', background: '#333', color: '#fff', border: 'none', borderRadius: 'var(--radius)', fontSize: 14, fontWeight: 600, cursor: 'pointer' },
   message: { marginTop: 8, fontSize: 12, fontFamily: 'var(--font-mono)' },
 
   // 仓位金额
-  sizeInput: { width: 80, padding: '4px 8px', background: 'var(--bg-deep)', color: '#e6edf3', border: '1px solid #58a6ff', borderRadius: 4, fontSize: 14, fontFamily: 'var(--font-mono)', textAlign: 'center' },
+  sizeInput: { width: 80, padding: '4px 8px', background: 'var(--bg)', color: '#e6edf3', border: '1px solid #58a6ff', borderRadius: 4, fontSize: 14, fontFamily: 'var(--font-mono)', textAlign: 'center' },
   applyBtn: { padding: '4px 8px', background: '#333', color: '#fff', border: 'none', borderRadius: 4, fontSize: 12, cursor: 'pointer' },
   cancelBtn: { padding: '4px 8px', background: '#21262d', color: 'var(--text-secondary)', border: '1px solid var(--border)', borderRadius: 4, fontSize: 12, cursor: 'pointer' },
   editBtn: { padding: '2px 8px', background: 'transparent', color: 'var(--text-secondary)', border: '1px solid var(--border)', borderRadius: 4, fontSize: 11, cursor: 'pointer' },
   presetBtn: { padding: '3px 8px', border: '1px solid', borderRadius: 4, fontSize: 11, cursor: 'pointer', fontFamily: 'var(--font-mono)', transition: 'all 0.15s' },
 
   // 提示音
-  soundToggle: { display: 'flex', alignItems: 'center', gap: 8, padding: '10px 16px', border: '1px solid', borderRadius: 'var(--radius)', cursor: 'pointer', transition: 'all 0.2s', width: '100%' },
+  soundToggle: { display: 'flex', alignItems: 'center', gap: 8, padding: '10px 16px', border: '1px solid', borderRadius: 'var(--radius-lg)', cursor: 'pointer', transition: 'all 0.2s', width: '100%' },
 
   // 持仓 + 日志
   rowGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 },
@@ -1223,12 +1223,12 @@ const styles = {
   noData: { textAlign: 'center', padding: 24, color: 'var(--text-muted)', fontSize: 13 },
   tableWrap: { overflowX: 'auto' },
   table: { width: '100%', borderCollapse: 'collapse', fontSize: 13, color: '#e6edf3' },
-  tableHeaderRow: { position: 'sticky', top: 0, background: 'var(--bg-deep)' },
+  tableHeaderRow: { position: 'sticky', top: 0, background: 'var(--bg)' },
   th: { padding: '6px 10px', textAlign: 'left', borderBottom: '1px solid #30363d', color: 'var(--text-secondary)', fontWeight: 600, fontSize: 11, whiteSpace: 'nowrap' },
   td: { padding: '6px 10px', borderBottom: '1px solid #21262d', whiteSpace: 'nowrap' },
 
   // 日志
-  logBox: { background: 'var(--bg-deep)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '10px 14px', maxHeight: 260, overflowY: 'auto', fontFamily: 'var(--font-mono)', fontSize: 12 },
+  logBox: { background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '10px 14px', maxHeight: 260, overflowY: 'auto', fontFamily: 'var(--font-mono)', fontSize: 12 },
   logLine: { padding: '2px 0', display: 'flex', gap: 8 },
   logTs: { color: 'var(--text-muted)', flexShrink: 0 },
 };

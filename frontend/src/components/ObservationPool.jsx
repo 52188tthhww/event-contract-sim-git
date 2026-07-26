@@ -94,7 +94,7 @@ export default function ObservationPool({ onLockChange }) {
   };
 
   return (
-    <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: 16, marginTop: 12 }}>
+    <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: 16, marginTop: 12 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, flexWrap: 'wrap', gap: 6 }}>
         <h3 style={{ fontSize: 14, fontWeight: 600, margin: 0, color: '#e6edf3' }}>
           🔍 观测池
@@ -104,13 +104,13 @@ export default function ObservationPool({ onLockChange }) {
         </h3>
         <div style={{ display: 'flex', gap: 6 }}>
           <button onClick={() => setShowAll(!showAll)}
-            style={{ padding: '4px 10px', borderRadius: 'var(--radius-sm)', fontSize: 11, fontWeight: 600,
-              background: showAll ? 'var(--accent-dim)' : '#21262d', color: showAll ? 'var(--accent)' : 'var(--text-secondary)',
+            style={{ padding: '4px 10px', borderRadius: 'var(--radius)', fontSize: 11, fontWeight: 600,
+              background: showAll ? 'rgba(255,255,255,.06)' : '#21262d', color: showAll ? 'var(--accent)' : 'var(--text-secondary)',
               border: '1px solid var(--border)', cursor: 'pointer' }}>
             {showAll ? '✓ 活跃' : '☰ 全部'}
           </button>
           <button onClick={handleReset}
-            style={{ padding: '4px 10px', borderRadius: 'var(--radius-sm)', fontSize: 11, fontWeight: 600,
+            style={{ padding: '4px 10px', borderRadius: 'var(--radius)', fontSize: 11, fontWeight: 600,
               background: '#21262d', color: '#555', border: '1px solid var(--border)', cursor: 'pointer' }}>
             🔄
           </button>
@@ -122,7 +122,7 @@ export default function ObservationPool({ onLockChange }) {
       <div style={{ maxHeight: 400, overflowY: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12, color: '#e6edf3' }}>
           <thead>
-            <tr style={{ position: 'sticky', top: 0, zIndex: 2, background: 'var(--bg-deep)' }}>
+            <tr style={{ position: 'sticky', top: 0, zIndex: 2, background: 'var(--bg)' }}>
               <th style={th}>策略</th>
               <th style={{ ...th, textAlign: 'center' }}>3min</th>
               <th style={{ ...th, textAlign: 'center' }}>5min</th>

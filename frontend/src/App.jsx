@@ -137,39 +137,36 @@ function App() {
 }
 
 const styles = {
-  wrapper: { minHeight: '100vh', maxWidth: 1440, margin: '0 auto', padding: '0 24px 40px' },
+  wrapper: { minHeight: '100vh', maxWidth: 1200, margin: '0 auto', padding: '0 20px 40px' },
   header: {
     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-    padding: '20px 0 14px', borderBottom: '1px solid var(--border)',
-    flexWrap: 'wrap', gap: 12,
+    padding: '18px 0 12px', borderBottom: '1px solid var(--border)',
+    flexWrap: 'wrap', gap: 10,
   },
-  headerLeft: { display: 'flex', alignItems: 'center', gap: 12 },
-  title: { fontSize: 20, fontWeight: 700, color: '#fff', letterSpacing: '-0.01em' },
+  headerLeft: { display: 'flex', alignItems: 'center', gap: 10 },
+  title: { fontSize: 17, fontWeight: 600, color: 'var(--text)', letterSpacing: '-.01em' },
   sourceBadge: {
     display: 'flex', alignItems: 'center', gap: 5,
-    background: 'var(--bg-card)', border: '1px solid var(--border)',
-    borderRadius: 20, padding: '3px 10px',
+    background: 'var(--surface)', border: '1px solid var(--border)',
+    borderRadius: 20, padding: '2px 9px',
   },
-  dot: { width: 7, height: 7, borderRadius: '50%' },
-  headerRight: { display: 'flex', gap: 14 },
-  ticker: { display: 'flex', alignItems: 'baseline', gap: 6 },
-  tickerLabel: { fontSize: 10, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' },
-  tickerPrice: { fontSize: 14, fontWeight: 600, color: '#fff' },
-  tabs: {
-    display: 'flex', gap: 4, padding: '14px 0',
-    borderBottom: '1px solid var(--border)',
-  },
+  dot: { width: 6, height: 6, borderRadius: '50%' },
+  headerRight: { display: 'flex', gap: 12 },
+  ticker: { display: 'flex', alignItems: 'baseline', gap: 5 },
+  tickerLabel: { fontSize: 9, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '.06em' },
+  tickerPrice: { fontSize: 13, fontWeight: 600, color: 'var(--text)', fontFamily: 'var(--font-mono)' },
+  tabs: { display: 'flex', gap: 2, padding: '12px 0', borderBottom: '1px solid var(--border)' },
   tab: {
-    display: 'flex', alignItems: 'center', gap: 6,
-    padding: '8px 18px', border: '1px solid transparent', borderRadius: 'var(--radius)',
+    display: 'flex', alignItems: 'center', gap: 5,
+    padding: '6px 16px', border: '1px solid transparent', borderRadius: 'var(--radius-lg)',
     background: 'transparent', color: 'var(--text-secondary)',
-    fontSize: 13, fontWeight: 500,
+    fontSize: 12, fontWeight: 500,
   },
   tabActive: {
-    background: 'var(--accent-dim)', border: '1px solid rgba(47,129,247,.25)',
-    color: 'var(--accent)',
+    background: 'rgba(255,255,255,.05)', border: '1px solid var(--border)',
+    color: 'var(--text)',
   },
-  main: { paddingTop: 20 },
+  main: { paddingTop: 16 },
 };
 
 export default App;

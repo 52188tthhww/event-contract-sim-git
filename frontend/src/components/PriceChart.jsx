@@ -175,35 +175,33 @@ export default function PriceChart() {
 }
 
 const styles = {
-  cardRow: { display: 'flex', gap: 12, marginBottom: 16 },
+  cardRow: { display: 'flex', gap: 10, marginBottom: 14 },
   priceCard: {
-    flex: 1, background: 'var(--bg-card)', border: '1px solid var(--border)',
-    borderRadius: 'var(--radius-lg)', padding: '20px 24px',
-    boxShadow: 'var(--shadow-sm)', transition: 'border-color var(--transition)',
+    flex: 1, background: 'var(--surface)', border: '1px solid var(--border)',
+    borderRadius: 'var(--radius-xl)', padding: '18px 22px',
+    boxShadow: 'var(--shadow)',
   },
   cardLabel: {
-    fontSize: 10, fontWeight: 600, color: 'var(--text-secondary)',
-    textTransform: 'uppercase', letterSpacing: '.08em', marginBottom: 8,
+    fontSize: 10, fontWeight: 600, color: 'var(--text-muted)',
+    textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 6,
   },
   cardPrice: {
-    fontSize: 32, fontWeight: 700, fontFamily: 'var(--font-mono)', letterSpacing: '-.02em',
+    fontSize: 28, fontWeight: 700, fontFamily: 'var(--font-mono)', letterSpacing: '-.02em',
     lineHeight: 1.1,
   },
   cardChange: {
-    fontSize: 13, marginTop: 8, fontFamily: 'var(--font-mono)', fontWeight: 500,
+    fontSize: 12, marginTop: 6, fontFamily: 'var(--font-mono)', fontWeight: 500,
   },
-  chartsGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 },
+  chartsGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 },
   chartBox: {
-    background: 'var(--bg-card)', border: '1px solid var(--border)',
-    borderRadius: 'var(--radius-lg)', padding: 18, boxShadow: 'var(--shadow-sm)',
+    background: 'var(--surface)', border: '1px solid var(--border)',
+    borderRadius: 'var(--radius-xl)', padding: 16, boxShadow: 'var(--shadow)',
   },
   chartHeader: {
-    display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
-    marginBottom: 8,
+    display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 6,
   },
-  chartTitle: { fontSize: 12, fontWeight: 600 },
+  chartTitle: { fontSize: 11, fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '.04em' },
   footnote: {
-    marginTop: 16, fontSize: 11, color: 'var(--text-muted)', textAlign: 'center',
-    letterSpacing: '.02em',
+    marginTop: 14, fontSize: 10, color: 'var(--text-muted)', textAlign: 'center',
   },
 };
