@@ -10,7 +10,7 @@ import axios from 'axios';
 const API = process.env.REACT_APP_API ?? '';
 const histHttp = axios.create({ baseURL: API, timeout: 30000 });
 
-const COLORS = { BTC_USDT: 'var(--text)', ETH_USDT: 'var(--text-secondary)' };
+const COLORS = { BTC_USDT: 'var(--btc)', ETH_USDT: 'var(--eth)' };
 const LABELS = { BTC_USDT: 'BTC/USDT', ETH_USDT: 'ETH/USDT' };
 
 // ── Web Audio 提示音 ──
@@ -974,7 +974,7 @@ const PriceChartSection = memo(function PriceChartSection({ priceData, allPositi
     return [Math.floor(min - pad), Math.ceil(max + pad)];
   }, [priceData, sym]);
 
-  const COLORS = { BTC_USDT: 'var(--text)', ETH_USDT: 'var(--text-secondary)' };
+  const COLORS = { BTC_USDT: 'var(--btc)', ETH_USDT: 'var(--eth)' };
   const LABELS = { BTC_USDT: 'BTC/USDT', ETH_USDT: 'ETH/USDT' };
   const tooltipStyle = { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', fontSize: 12, color: 'var(--text)' };
 

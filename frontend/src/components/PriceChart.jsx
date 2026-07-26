@@ -9,7 +9,7 @@ import axios from 'axios';
 const API = process.env.REACT_APP_API ?? '';
 const http = axios.create({ baseURL: API, timeout: 30000 });
 
-const COLORS = { BTC_USDT: 'var(--accent)', ETH_USDT: 'var(--text-secondary)' };
+const COLORS = { BTC_USDT: 'var(--btc)', ETH_USDT: 'var(--eth)' };
 const LABELS = { BTC_USDT: 'BTC/USDT', ETH_USDT: 'ETH/USDT' };
 
 // Tooltip component with better formatting
