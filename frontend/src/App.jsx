@@ -69,11 +69,11 @@ function App() {
           <div style={styles.sourceBadge}>
             <span style={{
               ...styles.dot,
-              background: isLive ? '#fff' : '#888',
-              boxShadow: isLive ? '0 0 6px #3fb95088' : '0 0 6px #d2992288',
+              background: isLive ? 'var(--accent)' : 'var(--text-muted)',
+              boxShadow: isLive ? '0 0 6px rgba(212,168,83,.5)' : 'none',
               animation: isLive ? 'pulse 2s infinite' : 'none',
             }} />
-            <span style={{ color: isLive ? '#fff' : '#888', fontSize: 11, fontWeight: 600 }}>
+            <span style={{ color: isLive ? 'var(--accent)' : 'var(--text-muted)', fontSize: 11, fontWeight: 600 }}>
               {isLive ? 'LIVE' : 'SIM'}
             </span>
           </div>
@@ -144,7 +144,7 @@ const styles = {
     flexWrap: 'wrap', gap: 10,
   },
   headerLeft: { display: 'flex', alignItems: 'center', gap: 10 },
-  title: { fontSize: 17, fontWeight: 600, color: 'var(--text)', letterSpacing: '-.01em' },
+  title: { fontSize: 17, fontWeight: 600, color: 'var(--accent)', letterSpacing: '-.01em' },
   sourceBadge: {
     display: 'flex', alignItems: 'center', gap: 5,
     background: 'var(--surface)', border: '1px solid var(--border)',
@@ -154,7 +154,7 @@ const styles = {
   headerRight: { display: 'flex', gap: 12 },
   ticker: { display: 'flex', alignItems: 'baseline', gap: 5 },
   tickerLabel: { fontSize: 9, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '.06em' },
-  tickerPrice: { fontSize: 13, fontWeight: 600, color: 'var(--text)', fontFamily: 'var(--font-mono)' },
+  tickerPrice: { fontSize: 13, fontWeight: 600, color: 'var(--accent)', fontFamily: 'var(--font-mono)' },
   tabs: { display: 'flex', gap: 2, padding: '12px 0', borderBottom: '1px solid var(--border)' },
   tab: {
     display: 'flex', alignItems: 'center', gap: 5,
@@ -164,7 +164,7 @@ const styles = {
   },
   tabActive: {
     background: 'rgba(255,255,255,.05)', border: '1px solid var(--border)',
-    color: 'var(--text)',
+    color: 'var(--accent)',
   },
   main: { paddingTop: 16 },
 };
