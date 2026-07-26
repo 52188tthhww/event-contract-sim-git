@@ -41,7 +41,8 @@ async def price_poller():
                     app_state.setdefault("mark_prices", {})[sym] = tick.get("mark_price", tick["price"])
                     try:
                         db = await get_db()
-                        await save_tick(db, sym, tick["price"], int(time.time()))
+                        if gc._data_source == gc.SOURCE_LIVE:
+                            await save_tick(db, sym, tick["price"], int(time.time()))
                     except Exception:
                         pass
             _pf = 0
@@ -414,11 +415,6 @@ app.add_middleware(
 
 
 # ───────────────────── 请求模型 ─────────────────────
-# ── 扩展：观测池 ──
-from ext_state import extend_state
-extend_state()
-from ext_routes import register_observation_routes
-register_observation_routes(app)
 
 class BacktestReq(BaseModel):
     symbol: str = "BTC_USDT"
@@ -476,7 +472,7 @@ async def poll_all():
     # 从 DB 聚合每策略 W/L（缓存 30 秒，只统计锁定后的交易）
     now = time.time()
     cached = app_state.get("_strategy_stats_cache")
-    if not cached or now - cached.get("_ts", 0) > 120:
+    if not cached or now - cached.get("_ts", 0) > 30:
         sst = {}
         # 收集所有锁定策略的 locked_at 时间
         locked_since = {}
@@ -566,21 +562,9 @@ async def get_price_history(
 # ── 回测 ──
 
 @app.get("/reports")
-def get_reports(summary: bool = True):
-    reports = app_state["last_reports"]
-    if summary and reports:
-        reports = [
-            {
-                "symbol": r["symbol"],
-                "reports": [
-                    {k: v for k, v in rep.items() if k != "trades"}
-                    for rep in r["reports"]
-                ]
-            }
-            for r in reports
-        ]
+def get_reports():
     return {
-        "reports": reports,
+        "reports": app_state["last_reports"],
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
 
