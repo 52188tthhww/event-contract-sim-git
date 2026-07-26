@@ -272,8 +272,8 @@ export default function SimAccount() {
   };
 
   const tooltipStyle = {
-    background: '#161b22', border: '1px solid #30363d',
-    borderRadius: 6, fontSize: 12, color: '#e1e4e8',
+    background: 'var(--bg-card)', border: '1px solid var(--border)',
+    borderRadius: 'var(--radius-sm)', fontSize: 12, color: '#e6edf3',
   };
 
   return (
@@ -492,7 +492,7 @@ export default function SimAccount() {
               }}>
                 <div style={styles.lockedDur}>{dur} 分钟</div>
                 {strategies.length === 0 ? (
-                  <div style={{ ...styles.lockedName, color: '#8b949e' }}>未锁定</div>
+                  <div style={{ ...styles.lockedName, color: 'var(--text-secondary)' }}>未锁定</div>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                     {strategies.map((s, i) => {
@@ -513,7 +513,7 @@ export default function SimAccount() {
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={styles.lockedItemName}>{s.name}</div>
                           {total > 0 && (
-                            <span style={{ fontSize: 10, fontFamily: 'monospace', color: wins >= losses ? '#3fb950' : '#f85149' }}>
+                            <span style={{ fontSize: 10, fontFamily: 'var(--font-mono)', color: wins >= losses ? '#3fb950' : '#f85149' }}>
                               {wins}W / {losses}L
                             </span>
                           )}
@@ -596,20 +596,20 @@ export default function SimAccount() {
               {soundOn ? '已开启' : '已关闭'}
             </span>
           </button>
-          <div style={{ fontSize: 11, color: '#484f58', marginTop: 4 }}>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>
             开仓/平仓时播放提示音
           </div>
         </div>
       </div>
 
       {/* ═══════ 自动锁定策略 ═══════ */}
-      <div style={{ ...styles.section, background: autoLock.enabled ? '#1a2a1a' : '#161b22', border: autoLock.enabled ? '1px solid #3fb95055' : '1px solid #21262d', borderRadius: 8, padding: 14 }}>
+      <div style={{ ...styles.section, background: autoLock.enabled ? '#1a2a1a' : '#161b22', border: autoLock.enabled ? '1px solid #3fb95055' : '1px solid #21262d', borderRadius: 'var(--radius)', padding: 14 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <h3 style={{ ...styles.sectionTitle, margin: 0 }}>🤖 自动锁定策略</h3>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               {!autoLock.enabled && [3, 5, 10].map(d => (
-                <label key={d} style={{ fontSize: 12, color: '#8b949e', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 3 }}>
+                <label key={d} style={{ fontSize: 12, color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 3 }}>
                   <input type="checkbox" checked={autoLockSelected.includes(d)}
                     onChange={e => {
                       if (e.target.checked) setAutoLockSelected(prev => [...prev, d].sort());
@@ -642,7 +642,7 @@ export default function SimAccount() {
                 }
               }}
               style={{
-                padding: '6px 16px', borderRadius: 6, fontWeight: 700, fontSize: 13, cursor: 'pointer',
+                padding: '6px 16px', borderRadius: 'var(--radius-sm)', fontWeight: 700, fontSize: 13, cursor: 'pointer',
                 background: autoLock.enabled ? '#da3633' : '#238636',
                 color: '#fff', border: 'none',
                 opacity: !autoLock.enabled && autoLockSelected.length === 0 ? 0.5 : 1,
@@ -661,16 +661,16 @@ export default function SimAccount() {
                 const strat = ds.active_strategy;
                 return (
                   <div key={d} style={{
-                    background: '#0d1117', borderRadius: 6, padding: '6px 12px',
+                    background: 'var(--bg-deep)', borderRadius: 'var(--radius-sm)', padding: '6px 12px',
                     border: `1px solid ${color}44`, minWidth: 150,
                   }}>
-                    <div style={{ fontSize: 11, color: '#8b949e' }}>{d}分钟 · {label}</div>
+                    <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{d}分钟 · {label}</div>
                     {strat && (
                       <>
                         <div style={{ fontSize: 12, fontWeight: 600, color }}>
                           {strat.name?.slice(0, 15)}
                         </div>
-                        <div style={{ fontSize: 10, color: '#484f58' }}>
+                        <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>
                           回测胜率 {(strat.win_rate * 100).toFixed(0)}% · {strat.total_trades}笔
                           {ds.trade_count > 0 && <> · 实盘{ds.trade_count}笔</>}
                         </div>
@@ -685,14 +685,14 @@ export default function SimAccount() {
             </div>
           )}
         </div>
-        <div style={{ fontSize: 11, color: '#484f58', marginTop: 6 }}>
+        <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 6 }}>
           {autoLock.enabled ? '运行中' : '开启后自动筛选策略并执行'}
         </div>
 
         {/* 参数设置 */}
         {!autoLock.enabled && (
           <div style={{ display: 'flex', gap: 10, marginTop: 10, flexWrap: 'wrap', alignItems: 'center' }}>
-            <div style={{ fontSize: 11, color: '#8b949e' }}>
+            <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>
               回测:
               <select value={localSettings.backtest_hours}
                 onChange={e => setLocalSettings(p => ({...p, backtest_hours: e.target.value}))}
@@ -705,7 +705,7 @@ export default function SimAccount() {
                 <option value="4">仅4h</option>
               </select>
             </div>
-            <div style={{ fontSize: 11, color: '#8b949e', display: 'flex', alignItems: 'center', gap: 3 }}>
+            <div style={{ fontSize: 11, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 3 }}>
               <input type="checkbox" checked={localSettings.reverse_mode}
                 onChange={e => setLocalSettings(p => ({...p, reverse_mode: e.target.checked}))}
               />反向
@@ -715,14 +715,14 @@ export default function SimAccount() {
                 style={styles.setInput} min={1} max={100} step={5}
               />%
             </div>
-            <div style={{ fontSize: 11, color: '#8b949e' }}>
+            <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>
               交易≥
               <input type="number" value={localSettings.min_trades}
                 onChange={e => setLocalSettings(p => ({...p, min_trades: parseInt(e.target.value) || 1}))}
                 style={{ ...styles.setInput, width: 42 }} min={1} max={50}
               />笔
             </div>
-            <div style={{ fontSize: 11, color: '#8b949e', display: 'flex', alignItems: 'center', gap: 3 }}>
+            <div style={{ fontSize: 11, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 3 }}>
               <input type="checkbox" checked={localSettings.loss_streak_enabled}
                 onChange={e => setLocalSettings(p => ({...p, loss_streak_enabled: e.target.checked}))}
               />
@@ -750,12 +750,12 @@ export default function SimAccount() {
           const trendColor = trend === 'bull' ? '#3fb950' : trend === 'bear' ? '#f85149' : '#d29922';
           return (
             <div style={{
-              background: '#161b22', border: `1px solid ${trendColor}44`, borderRadius: 8, padding: '10px 16px',
+              background: 'var(--bg-card)', border: `1px solid ${trendColor}44`, borderRadius: 'var(--radius)', padding: '10px 16px',
               flex: 1, minWidth: 200,
             }}>
-              <div style={{ fontSize: 11, color: '#8b949e', marginBottom: 2 }}>市场方向 (10分钟)</div>
+              <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginBottom: 2 }}>市场方向 (10分钟)</div>
               <div style={{ fontSize: 15, fontWeight: 700, color: trendColor }}>{trendLabel}</div>
-              <div style={{ fontSize: 10, color: '#484f58', marginTop: 2 }}>
+              <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>
                 BTC: ${btcPrices[btcPrices.length-1]?.toFixed(0) || '—'}
                 {btcPrices.length > 20 && ` · 变动 ${((btcPrices[btcPrices.length-1] / btcPrices[btcPrices.length-20] - 1) * 100).toFixed(2)}%`}
               </div>
@@ -763,14 +763,14 @@ export default function SimAccount() {
           );
         })()}
         <div style={{
-          background: '#161b22', border: '1px solid #21262d', borderRadius: 8, padding: '10px 16px',
+          background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '10px 16px',
           flex: 1, minWidth: 200,
         }}>
-          <div style={{ fontSize: 11, color: '#8b949e', marginBottom: 2 }}>系统状态</div>
+          <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginBottom: 2 }}>系统状态</div>
           <div style={{ fontSize: 15, fontWeight: 700, color: acc.status === 'RUNNING' ? '#3fb950' : '#d29922' }}>
             {acc.status === 'RUNNING' ? '▶ 运行中' : '⏸ 已暂停'}
           </div>
-          <div style={{ fontSize: 10, color: '#484f58', marginTop: 2 }}>
+          <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>
             余额: ${acc.balance?.toFixed(2) || '0'} · 持仓: {acc.open_count || 0} · 已平: {acc.closed_count || 0}
           </div>
         </div>
@@ -784,19 +784,19 @@ export default function SimAccount() {
             const wr = (st.win_rate || 0) * 100;
             return (
               <div key={d} style={{
-                background: '#161b22', border: '1px solid #21262d', borderRadius: 8, padding: '10px 16px',
+                background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '10px 16px',
                 flex: 1, minWidth: 140,
               }}>
-                <div style={{ fontSize: 11, color: '#8b949e', marginBottom: 2 }}>{d}分钟合约</div>
+                <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginBottom: 2 }}>{d}分钟合约</div>
                 <div style={{ fontSize: 13, fontWeight: 600 }}>
                   <span style={{ color: wr >= 50 ? '#3fb950' : '#f85149' }}>
                     胜率 {wr.toFixed(1)}%
                   </span>
-                  <span style={{ color: '#8b949e', marginLeft: 8, fontSize: 11 }}>
+                  <span style={{ color: 'var(--text-secondary)', marginLeft: 8, fontSize: 11 }}>
                     {st.wins || 0}W / {st.losses || 0}L
                   </span>
                 </div>
-                <div style={{ fontSize: 11, color: (st.total_pnl || 0) >= 0 ? '#3fb950' : '#f85149', fontFamily: 'monospace' }}>
+                <div style={{ fontSize: 11, color: (st.total_pnl || 0) >= 0 ? '#3fb950' : '#f85149', fontFamily: 'var(--font-mono)' }}>
                   PnL: {(st.total_pnl || 0) >= 0 ? '+' : ''}{(st.total_pnl || 0).toFixed(2)} USDT
                 </div>
               </div>
@@ -831,9 +831,9 @@ export default function SimAccount() {
                     <td style={{ ...styles.td, color: p.direction === 'UP' ? '#3fb950' : '#f85149', fontWeight: 600 }}>
                       {p.direction}
                     </td>
-                    <td style={{ ...styles.td, fontFamily: 'monospace' }}>${p.entry_price?.toFixed(4)}</td>
+                    <td style={{ ...styles.td, fontFamily: 'var(--font-mono)' }}>${p.entry_price?.toFixed(4)}</td>
                     <td style={{ ...styles.td, fontSize: 12 }}>{toLocalShort(p.entry_ts)}</td>
-                    <td style={{ ...styles.td, fontSize: 12, color: '#8b949e' }}>{p.strategy_name || p.strategy_id}</td>
+                    <td style={{ ...styles.td, fontSize: 12, color: 'var(--text-secondary)' }}>{p.strategy_name || p.strategy_id}</td>
                   </tr>
                 ))}
               </tbody>
@@ -846,7 +846,7 @@ export default function SimAccount() {
       <div style={styles.section}>
         <h3 style={styles.sectionTitle}>
           📋 历史交易记录 ({history.length})
-          <span style={{ fontSize: 11, color: '#484f58', marginLeft: 8 }}>
+          <span style={{ fontSize: 11, color: 'var(--text-muted)', marginLeft: 8 }}>
             开仓点位 · 时间 · 输赢
           </span>
         </h3>
@@ -883,17 +883,17 @@ export default function SimAccount() {
                     }}>
                       {t.direction}
                     </td>
-                    <td style={{ ...styles.td, fontSize: 11, color: '#8b949e', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                    <td style={{ ...styles.td, fontSize: 11, color: 'var(--text-secondary)', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                         title={t.strategy_name || t.strategy_id || '—'}>
                       {t.strategy_name || t.strategy_id || '—'}
                     </td>
-                    <td style={{ ...styles.td, fontFamily: 'monospace' }}>
+                    <td style={{ ...styles.td, fontFamily: 'var(--font-mono)' }}>
                       ${t.entry_price?.toFixed?.(4) || '—'}
                     </td>
                     <td style={{ ...styles.td, fontSize: 11 }}>
                       {toLocalShort(t.entry_ts)}
                     </td>
-                    <td style={{ ...styles.td, fontFamily: 'monospace' }}>
+                    <td style={{ ...styles.td, fontFamily: 'var(--font-mono)' }}>
                       ${t.exit_price?.toFixed?.(4) || '—'}
                     </td>
                     <td style={{ ...styles.td, fontSize: 11 }}>
@@ -901,7 +901,7 @@ export default function SimAccount() {
                     </td>
                     <td style={{
                       ...styles.td,
-                      fontFamily: 'monospace',
+                      fontFamily: 'var(--font-mono)',
                       fontWeight: 700,
                       color: (t.pnl || 0) >= 0 ? '#3fb950' : '#f85149',
                     }}>
@@ -976,13 +976,13 @@ const PriceChartSection = memo(function PriceChartSection({ priceData, allPositi
 
   const COLORS = { BTC_USDT: '#f7931a', ETH_USDT: '#627eea' };
   const LABELS = { BTC_USDT: 'BTC/USDT', ETH_USDT: 'ETH/USDT' };
-  const tooltipStyle = { background: '#161b22', border: '1px solid #30363d', borderRadius: 6, fontSize: 12, color: '#e1e4e8' };
+  const tooltipStyle = { background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', fontSize: 12, color: '#e6edf3' };
 
   return (
-    <div style={{ background: '#161b22', border: '1px solid #21262d', borderRadius: 8, padding: 16 }}>
+    <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: 16 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
         <h3 style={{ fontSize: 14, fontWeight: 600, margin: 0, color: COLORS[sym] }}>{LABELS[sym]}</h3>
-        <span style={{ fontSize: 11, color: '#8b949e', background: '#21262d', padding: '2px 8px', borderRadius: 10 }}>{markers.length} 笔标记</span>
+        <span style={{ fontSize: 11, color: 'var(--text-secondary)', background: '#21262d', padding: '2px 8px', borderRadius: 10 }}>{markers.length} 笔标记</span>
       </div>
       <ResponsiveContainer width="100%" height={320}>
         <ComposedChart data={priceData} margin={{ top: 10, right: 10, bottom: 5, left: 10 }}>
@@ -1000,7 +1000,7 @@ const PriceChartSection = memo(function PriceChartSection({ priceData, allPositi
       {markers.length > 0 && (
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 8 }}>
           {markers.slice(-5).reverse().map(m => (
-            <span key={m.id} style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontFamily: 'monospace', border: '1px solid', whiteSpace: 'nowrap', color: m.direction === 'UP' ? '#3fb950' : '#f85149', borderColor: m.status === 'OPEN' ? (m.direction === 'UP' ? '#3fb950' : '#f85149') : '#30363d', background: m.status === 'OPEN' ? (m.direction === 'UP' ? '#3fb95015' : '#f8514915') : 'transparent' }}>
+            <span key={m.id} style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontFamily: 'var(--font-mono)', border: '1px solid', whiteSpace: 'nowrap', color: m.direction === 'UP' ? '#3fb950' : '#f85149', borderColor: m.status === 'OPEN' ? (m.direction === 'UP' ? '#3fb950' : '#f85149') : '#30363d', background: m.status === 'OPEN' ? (m.direction === 'UP' ? '#3fb95015' : '#f8514915') : 'transparent' }}>
               {m.direction === 'UP' ? '▲' : '▼'} {m.duration}m @{m.price?.toFixed(1)}{m.status === 'OPEN' && ' ●'}
             </span>
           ))}
@@ -1011,13 +1011,13 @@ const PriceChartSection = memo(function PriceChartSection({ priceData, allPositi
 });
 
 const HistoryTable = memo(function HistoryTable({ history }) {
-  if (history.length === 0) return <div style={{ textAlign: 'center', padding: 24, color: '#484f58', fontSize: 13 }}>暂无历史记录</div>;
+  if (history.length === 0) return <div style={{ textAlign: 'center', padding: 24, color: 'var(--text-muted)', fontSize: 13 }}>暂无历史记录</div>;
   const toLocalShort = (isoStr) => { if (!isoStr) return '—'; const d = new Date(isoStr); if (isNaN(d.getTime())) return isoStr; const pad = (n) => String(n).padStart(2, '0'); return `${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`; };
   return (
     <div style={{ maxHeight: 360, overflowY: 'auto' }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12, color: '#e1e4e8' }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12, color: '#e6edf3' }}>
         <thead>
-          <tr style={{ position: 'sticky', top: 0, zIndex: 2, background: '#0d1117' }}>
+          <tr style={{ position: 'sticky', top: 0, zIndex: 2, background: 'var(--bg-deep)' }}>
             <th style={tStyle}>品种</th><th style={tStyle}>时长</th><th style={tStyle}>方向</th><th style={tStyle}>入场价</th><th style={tStyle}>入场时间</th><th style={tStyle}>出场价</th><th style={tStyle}>出场时间</th><th style={tStyle}>盈亏</th><th style={tStyle}>结果</th>
           </tr>
         </thead>
@@ -1027,11 +1027,11 @@ const HistoryTable = memo(function HistoryTable({ history }) {
               <td style={{ ...tStyle, fontWeight: 600 }}>{t.symbol}</td>
               <td style={tStyle}>{t.duration}m</td>
               <td style={{ ...tStyle, color: t.direction === 'UP' ? '#3fb950' : '#f85149', fontWeight: 600 }}>{t.direction}</td>
-              <td style={{ ...tStyle, fontFamily: 'monospace' }}>${t.entry_price?.toFixed?.(4) || '—'}</td>
+              <td style={{ ...tStyle, fontFamily: 'var(--font-mono)' }}>${t.entry_price?.toFixed?.(4) || '—'}</td>
               <td style={{ ...tStyle, fontSize: 11 }}>{toLocalShort(t.entry_ts)}</td>
-              <td style={{ ...tStyle, fontFamily: 'monospace' }}>${t.exit_price?.toFixed?.(4) || '—'}</td>
+              <td style={{ ...tStyle, fontFamily: 'var(--font-mono)' }}>${t.exit_price?.toFixed?.(4) || '—'}</td>
               <td style={{ ...tStyle, fontSize: 11 }}>{toLocalShort(t.exit_ts)}</td>
-              <td style={{ ...tStyle, fontFamily: 'monospace', fontWeight: 700, color: (t.pnl || 0) >= 0 ? '#3fb950' : '#f85149' }}>{(t.pnl || 0) >= 0 ? '+' : ''}{t.pnl?.toFixed?.(2) || '0'} USDT</td>
+              <td style={{ ...tStyle, fontFamily: 'var(--font-mono)', fontWeight: 700, color: (t.pnl || 0) >= 0 ? '#3fb950' : '#f85149' }}>{(t.pnl || 0) >= 0 ? '+' : ''}{t.pnl?.toFixed?.(2) || '0'} USDT</td>
               <td style={tStyle}><span style={{ padding: '2px 8px', borderRadius: 10, fontSize: 11, fontWeight: 700, background: (t.pnl || 0) > 0 ? '#1a3a2a' : '#3a1a1a', color: (t.pnl || 0) > 0 ? '#3fb950' : '#f85149' }}>{(t.pnl || 0) > 0 ? '✅ WIN' : '❌ LOSE'}</span></td>
             </tr>
           ))}
@@ -1044,12 +1044,12 @@ const HistoryTable = memo(function HistoryTable({ history }) {
 const tStyle = { padding: '6px 12px', borderBottom: '1px solid #21262d', whiteSpace: 'nowrap' };
 
 const EventLog = memo(function EventLog({ events }) {
-  if (!events || events.length === 0) return <div style={{ textAlign: 'center', padding: 24, color: '#484f58', fontSize: 13 }}>暂无事件</div>;
+  if (!events || events.length === 0) return <div style={{ textAlign: 'center', padding: 24, color: 'var(--text-muted)', fontSize: 13 }}>暂无事件</div>;
   return (
-    <div style={{ background: '#0d1117', border: '1px solid #21262d', borderRadius: 8, padding: '10px 14px', maxHeight: 260, overflowY: 'auto', fontFamily: 'monospace', fontSize: 12 }}>
+    <div style={{ background: 'var(--bg-deep)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '10px 14px', maxHeight: 260, overflowY: 'auto', fontFamily: 'var(--font-mono)', fontSize: 12 }}>
       {events.slice().reverse().slice(0, 30).map((e, i) => (
         <div key={i} style={{ padding: '2px 0', display: 'flex', gap: 8, color: e.level === 'ERROR' ? '#f85149' : e.level === 'WARN' ? '#d29922' : '#8b949e' }}>
-          <span style={{ color: '#484f58', flexShrink: 0 }}>{e.ts?.slice(11, 19) || ''}</span>
+          <span style={{ color: 'var(--text-muted)', flexShrink: 0 }}>{e.ts?.slice(11, 19) || ''}</span>
           <span>[{e.level}]</span>
           <span>{e.msg}</span>
         </div>
@@ -1094,7 +1094,7 @@ function PositionSizeInput({ value, onChange }) {
           </>
         ) : (
           <>
-            <span style={{ fontSize: 20, fontWeight: 700, fontFamily: 'monospace', color: '#58a6ff' }}>
+            <span style={{ fontSize: 20, fontWeight: 700, fontFamily: 'var(--font-mono)', color: '#58a6ff' }}>
               ${value}
             </span>
             <button onClick={() => { setDraft(String(value)); setEditing(true); }} style={styles.editBtn}>
@@ -1124,71 +1124,71 @@ function PositionSizeInput({ value, onChange }) {
 }
 
 const styles = {
-  empty: { textAlign: 'center', padding: 80, color: '#484f58', fontSize: 16 },
+  empty: { textAlign: 'center', padding: 80, color: 'var(--text-muted)', fontSize: 16 },
 
   // Toast
   toastLayer: { position: 'fixed', top: 16, right: 16, zIndex: 9999, display: 'flex', flexDirection: 'column', gap: 8, maxWidth: 380 },
   toast: {
     display: 'flex', alignItems: 'center', gap: 12,
     padding: '14px 18px', borderRadius: 10,
-    background: '#161b22', border: '1px solid #30363d',
-    fontSize: 13, color: '#e1e4e8',
+    background: 'var(--bg-card)', border: '1px solid var(--border)',
+    fontSize: 13, color: '#e6edf3',
     boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
     animation: 'slideIn 0.3s ease',
   },
   toastOpen: { borderColor: '#58a6ff', borderLeft: '3px solid #58a6ff' },
   toastWin: { borderColor: '#3fb950', borderLeft: '3px solid #3fb950' },
   toastLose: { borderColor: '#f85149', borderLeft: '3px solid #f85149' },
-  toastClose: { marginLeft: 'auto', background: 'none', border: 'none', color: '#484f58', fontSize: 14, cursor: 'pointer', padding: '2px 6px' },
+  toastClose: { marginLeft: 'auto', background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: 14, cursor: 'pointer', padding: '2px 6px' },
 
   // 异常弹窗
-  alert: { display: 'flex', gap: 16, padding: '20px 24px', background: '#2a1f00', border: '1px solid #d29922', borderRadius: 8, marginBottom: 20 },
+  alert: { display: 'flex', gap: 16, padding: '20px 24px', background: '#2a1f00', border: '1px solid #d29922', borderRadius: 'var(--radius)', marginBottom: 20 },
   alertIcon: { fontSize: 32 },
   alertBody: { flex: 1 },
   alertTitle: { fontSize: 16, fontWeight: 700, color: '#d29922', marginBottom: 8 },
-  alertMsg: { fontSize: 13, color: '#e1e4e8', marginBottom: 12, fontFamily: 'monospace' },
+  alertMsg: { fontSize: 13, color: '#e6edf3', marginBottom: 12, fontFamily: 'var(--font-mono)' },
   alertActions: { display: 'flex', gap: 10 },
-  confirmBtn: { padding: '8px 20px', background: '#238636', color: '#fff', border: 'none', borderRadius: 6, fontSize: 13, fontWeight: 600 },
-  abortBtn: { padding: '8px 20px', background: '#21262d', color: '#f85149', border: '1px solid #30363d', borderRadius: 6, fontSize: 13 },
+  confirmBtn: { padding: '8px 20px', background: '#238636', color: '#fff', border: 'none', borderRadius: 'var(--radius-sm)', fontSize: 13, fontWeight: 600 },
+  abortBtn: { padding: '8px 20px', background: '#21262d', color: '#f85149', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', fontSize: 13 },
 
   // 指标
   overviewGrid: { display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12, marginBottom: 20 },
-  card: { background: '#161b22', border: '1px solid #21262d', borderRadius: 8, padding: '14px 18px' },
-  cardLabel: { fontSize: 11, color: '#8b949e', marginBottom: 4 },
-  cardValue: { fontSize: 18, fontWeight: 700, fontFamily: 'monospace' },
+  card: { background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '14px 18px' },
+  cardLabel: { fontSize: 11, color: 'var(--text-secondary)', marginBottom: 4 },
+  cardValue: { fontSize: 18, fontWeight: 700, fontFamily: 'var(--font-mono)' },
 
   // 行情图
   chartsGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 },
-  chartBox: { background: '#161b22', border: '1px solid #21262d', borderRadius: 8, padding: 16 },
+  chartBox: { background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: 16 },
   chartHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
   chartTitle: { fontSize: 14, fontWeight: 600, margin: 0 },
-  chartBadge: { fontSize: 11, color: '#8b949e', background: '#21262d', padding: '2px 8px', borderRadius: 10 },
+  chartBadge: { fontSize: 11, color: 'var(--text-secondary)', background: '#21262d', padding: '2px 8px', borderRadius: 10 },
   markerList: { display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 8 },
   markerTag: {
-    padding: '2px 8px', borderRadius: 4, fontSize: 10, fontFamily: 'monospace',
+    padding: '2px 8px', borderRadius: 4, fontSize: 10, fontFamily: 'var(--font-mono)',
     border: '1px solid', whiteSpace: 'nowrap',
   },
 
   // 控制面板（4 列）
   controlPanel: { display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 20 },
-  controlBlock: { background: '#161b22', border: '1px solid #21262d', borderRadius: 8, padding: '14px 18px' },
-  sectionTitle: { fontSize: 13, fontWeight: 600, marginBottom: 10, color: '#e1e4e8' },
+  controlBlock: { background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '14px 18px' },
+  sectionTitle: { fontSize: 13, fontWeight: 600, marginBottom: 10, color: '#e6edf3' },
   lockedGrid: { display: 'flex', gap: 8 },
-  lockedCard: { flex: 1, background: '#0d1117', border: '1px solid #21262d', borderRadius: 6, padding: '8px 12px', transition: 'border-color 0.2s' },
-  lockedDur: { fontSize: 10, color: '#8b949e', marginBottom: 4 },
+  lockedCard: { flex: 1, background: 'var(--bg-deep)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', padding: '8px 12px', transition: 'border-color 0.2s' },
+  lockedDur: { fontSize: 10, color: 'var(--text-secondary)', marginBottom: 4 },
   lockedName: { fontSize: 13, fontWeight: 600 },
   lockedItem: {
     display: 'flex', alignItems: 'center', gap: 4,
     padding: '2px 4px', borderRadius: 3,
-    background: '#0d1117',
+    background: 'var(--bg-deep)',
   },
   lockedItemName: { fontSize: 11, fontWeight: 500, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
   symBadge: {
     fontSize: 9, fontWeight: 700, padding: '1px 4px', borderRadius: 2,
-    fontFamily: 'monospace', flexShrink: 0,
+    fontFamily: 'var(--font-mono)', flexShrink: 0,
   },
-  setSelect: { padding: '2px 4px', background: '#0d1117', color: '#e1e4e8', border: '1px solid #30363d', borderRadius: 3, fontSize: 11, marginLeft: 4 },
-  setInput: { padding: '2px 4px', background: '#0d1117', color: '#e1e4e8', border: '1px solid #30363d', borderRadius: 3, fontSize: 11, width: 40, textAlign: 'center', marginLeft: 4 },
+  setSelect: { padding: '2px 4px', background: 'var(--bg-deep)', color: '#e6edf3', border: '1px solid var(--border)', borderRadius: 3, fontSize: 11, marginLeft: 4 },
+  setInput: { padding: '2px 4px', background: 'var(--bg-deep)', color: '#e6edf3', border: '1px solid var(--border)', borderRadius: 3, fontSize: 11, width: 40, textAlign: 'center', marginLeft: 4 },
   unlockItemBtn: {
     background: 'none', border: 'none', color: '#f85149',
     fontSize: 12, cursor: 'pointer', padding: '0 4px',
@@ -1202,33 +1202,33 @@ const styles = {
     opacity: 0.5,
   },
   controlRow: { display: 'flex', gap: 8 },
-  pauseBtn: { padding: '8px 20px', background: '#21262d', color: '#d29922', border: '1px solid #30363d', borderRadius: 6, fontSize: 14, fontWeight: 600, cursor: 'pointer' },
-  resumeBtn: { padding: '8px 20px', background: '#238636', color: '#fff', border: 'none', borderRadius: 6, fontSize: 14, fontWeight: 600, cursor: 'pointer' },
-  message: { marginTop: 8, fontSize: 12, fontFamily: 'monospace' },
+  pauseBtn: { padding: '8px 20px', background: '#21262d', color: '#d29922', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', fontSize: 14, fontWeight: 600, cursor: 'pointer' },
+  resumeBtn: { padding: '8px 20px', background: '#238636', color: '#fff', border: 'none', borderRadius: 'var(--radius-sm)', fontSize: 14, fontWeight: 600, cursor: 'pointer' },
+  message: { marginTop: 8, fontSize: 12, fontFamily: 'var(--font-mono)' },
 
   // 仓位金额
-  sizeInput: { width: 80, padding: '4px 8px', background: '#0d1117', color: '#e1e4e8', border: '1px solid #58a6ff', borderRadius: 4, fontSize: 14, fontFamily: 'monospace', textAlign: 'center' },
+  sizeInput: { width: 80, padding: '4px 8px', background: 'var(--bg-deep)', color: '#e6edf3', border: '1px solid #58a6ff', borderRadius: 4, fontSize: 14, fontFamily: 'var(--font-mono)', textAlign: 'center' },
   applyBtn: { padding: '4px 8px', background: '#238636', color: '#fff', border: 'none', borderRadius: 4, fontSize: 12, cursor: 'pointer' },
-  cancelBtn: { padding: '4px 8px', background: '#21262d', color: '#8b949e', border: '1px solid #30363d', borderRadius: 4, fontSize: 12, cursor: 'pointer' },
-  editBtn: { padding: '2px 8px', background: 'transparent', color: '#8b949e', border: '1px solid #30363d', borderRadius: 4, fontSize: 11, cursor: 'pointer' },
-  presetBtn: { padding: '3px 8px', border: '1px solid', borderRadius: 4, fontSize: 11, cursor: 'pointer', fontFamily: 'monospace', transition: 'all 0.15s' },
+  cancelBtn: { padding: '4px 8px', background: '#21262d', color: 'var(--text-secondary)', border: '1px solid var(--border)', borderRadius: 4, fontSize: 12, cursor: 'pointer' },
+  editBtn: { padding: '2px 8px', background: 'transparent', color: 'var(--text-secondary)', border: '1px solid var(--border)', borderRadius: 4, fontSize: 11, cursor: 'pointer' },
+  presetBtn: { padding: '3px 8px', border: '1px solid', borderRadius: 4, fontSize: 11, cursor: 'pointer', fontFamily: 'var(--font-mono)', transition: 'all 0.15s' },
 
   // 提示音
-  soundToggle: { display: 'flex', alignItems: 'center', gap: 8, padding: '10px 16px', border: '1px solid', borderRadius: 8, cursor: 'pointer', transition: 'all 0.2s', width: '100%' },
+  soundToggle: { display: 'flex', alignItems: 'center', gap: 8, padding: '10px 16px', border: '1px solid', borderRadius: 'var(--radius)', cursor: 'pointer', transition: 'all 0.2s', width: '100%' },
 
   // 持仓 + 日志
   rowGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 },
 
   // 表格
-  noData: { textAlign: 'center', padding: 24, color: '#484f58', fontSize: 13 },
+  noData: { textAlign: 'center', padding: 24, color: 'var(--text-muted)', fontSize: 13 },
   tableWrap: { overflowX: 'auto' },
-  table: { width: '100%', borderCollapse: 'collapse', fontSize: 13, color: '#e1e4e8' },
-  tableHeaderRow: { position: 'sticky', top: 0, background: '#0d1117' },
-  th: { padding: '6px 10px', textAlign: 'left', borderBottom: '1px solid #30363d', color: '#8b949e', fontWeight: 600, fontSize: 11, whiteSpace: 'nowrap' },
+  table: { width: '100%', borderCollapse: 'collapse', fontSize: 13, color: '#e6edf3' },
+  tableHeaderRow: { position: 'sticky', top: 0, background: 'var(--bg-deep)' },
+  th: { padding: '6px 10px', textAlign: 'left', borderBottom: '1px solid #30363d', color: 'var(--text-secondary)', fontWeight: 600, fontSize: 11, whiteSpace: 'nowrap' },
   td: { padding: '6px 10px', borderBottom: '1px solid #21262d', whiteSpace: 'nowrap' },
 
   // 日志
-  logBox: { background: '#0d1117', border: '1px solid #21262d', borderRadius: 8, padding: '10px 14px', maxHeight: 260, overflowY: 'auto', fontFamily: 'monospace', fontSize: 12 },
+  logBox: { background: 'var(--bg-deep)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '10px 14px', maxHeight: 260, overflowY: 'auto', fontFamily: 'var(--font-mono)', fontSize: 12 },
   logLine: { padding: '2px 0', display: 'flex', gap: 8 },
-  logTs: { color: '#484f58', flexShrink: 0 },
+  logTs: { color: 'var(--text-muted)', flexShrink: 0 },
 };

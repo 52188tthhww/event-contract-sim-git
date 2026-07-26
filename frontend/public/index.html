@@ -5,18 +5,117 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>事件合约模拟交易系统</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f1117; color: #e1e4e8; -webkit-tap-highlight-color: transparent; }
-    button { cursor: pointer; touch-action: manipulation; }
+    /* ═══════════════════════════════════════════
+       Design System v2 — Trading Terminal
+       ═══════════════════════════════════════════ */
+    :root {
+      --bg-deep: #070b10;
+      --bg-base: #0c1117;
+      --bg-card: #111820;
+      --bg-hover: #161e28;
+      --border: #1c2532;
+      --border-active: #2d3a4a;
+      --text-primary: #e6edf3;
+      --text-secondary: #7d8590;
+      --text-muted: #484f58;
+      --accent: #2f81f7;
+      --accent-dim: #1f3a5c;
+      --success: #3fb950;
+      --success-dim: #162816;
+      --danger: #f85149;
+      --danger-dim: #281616;
+      --warning: #d29922;
+      --warning-dim: #282216;
+      --orange: #f0883e;
+      --purple: #a371f7;
+      --radius-sm: 6px;
+      --radius: 10px;
+      --radius-lg: 14px;
+      --shadow-card: 0 1px 2px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.03);
+      --shadow-elevated: 0 4px 12px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.04);
+      --font-mono: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', 'Fira Code', monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
+    }
 
-    /* ── 移动端响应式 (<768px) ── */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      -webkit-tap-highlight-color: transparent;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button {
+      cursor: pointer;
+      touch-action: manipulation;
+      font-family: inherit;
+      transition: all .15s ease;
+    }
+    button:active { transform: scale(.97); }
+
+    input, select {
+      font-family: inherit;
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 6px 10px;
+      font-size: 13px;
+      outline: none;
+      transition: border-color .15s ease;
+    }
+    input:focus, select:focus { border-color: var(--accent); }
+
+    table {
+      border-collapse: collapse;
+      font-variant-numeric: tabular-nums;
+    }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--border-active); }
+
+    /* ═══════════ Animations ═══════════ */
+    @keyframes priceFlashUp {
+      0% { background: transparent; }
+      30% { background: rgba(63,185,80,.18); }
+      100% { background: transparent; }
+    }
+    @keyframes priceFlashDown {
+      0% { background: transparent; }
+      30% { background: rgba(248,81,73,.18); }
+      100% { background: transparent; }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .5; }
+    }
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    .flash-up { animation: priceFlashUp .6s ease; }
+    .flash-down { animation: priceFlashDown .6s ease; }
+    .fade-in { animation: fadeInUp .3s ease; }
+    .slide-in { animation: slideInRight .3s ease; }
+
+    /* ═══════════ Mobile (<768px) ═══════════ */
     @media (max-width: 768px) {
-      /* 顶栏 */
-      header { flex-direction: column !important; padding: 12px 0 !important; }
+      header { flex-direction: column !important; padding: 12px 0 !important; gap: 6px !important; }
       header h1 { font-size: 16px !important; }
       header span { font-size: 11px !important; }
 
-      /* 标签页 — 横向滚动 */
       nav {
         overflow-x: auto !important;
         -webkit-overflow-scrolling: touch;
@@ -31,57 +130,26 @@
         white-space: nowrap;
       }
 
-      /* 外层容器 */
       #root > div { padding: 0 10px 20px !important; }
 
-      /* 行情看板价格卡片 */
-      [style*="cardRow"] {
-        flex-direction: column !important;
-        gap: 8px !important;
-      }
+      [style*="cardRow"] { flex-direction: column !important; gap: 8px !important; }
       [style*="cardPrice"] { font-size: 22px !important; }
+      [style*="1fr 1fr"] { grid-template-columns: 1fr !important; }
+      [style*="repeat(6, 1fr)"] { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+      [style*="repeat(4, 1fr)"] { grid-template-columns: 1fr !important; gap: 8px !important; }
 
-      /* 行情图：双列→单列 */
-      [style*="1fr 1fr"] {
-        grid-template-columns: 1fr !important;
-      }
-
-      /* 模拟账户 6 指标→2 列 */
-      [style*="repeat(6, 1fr)"] {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 8px !important;
-      }
-
-      /* 控制面板 4 列→1 列 */
-      [style*="repeat(4, 1fr)"] {
-        grid-template-columns: 1fr !important;
-        gap: 8px !important;
-      }
-
-      /* Toast */
       [style*="toastLayer"] > div {
-        padding: 10px 12px !important;
-        font-size: 11px !important;
-        max-width: 280px !important;
+        padding: 10px 12px !important; font-size: 11px !important; max-width: 280px !important;
       }
 
-      /* 图表高度缩小 */
       [style*="height: 320"] { height: 200px !important; }
       [style*="height: 280"] { height: 180px !important; }
-
-      /* 卡片字号缩小 */
       [style*="fontSize: 18px"] { font-size: 15px !important; }
       [style*="fontSize: 28px"] { font-size: 22px !important; }
 
-      /* 表格区域 */
-      div[style*="overflowX"] {
-        overflow-x: auto !important;
-        -webkit-overflow-scrolling: touch;
-      }
+      div[style*="overflowX"] { overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
       table { font-size: 11px !important; }
       th, td { padding: 4px 6px !important; }
-
-      /* 输入框 */
       input[type="number"] { font-size: 14px !important; }
     }
   </style>

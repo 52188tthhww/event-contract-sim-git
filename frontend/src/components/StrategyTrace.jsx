@@ -60,11 +60,11 @@ export default function StrategyTrace({ report }) {
   };
   // 暗色主题 tooltip
   const tooltipStyle = {
-    background: '#161b22',
-    border: '1px solid #30363d',
-    borderRadius: 6,
+    background: 'var(--bg-card)',
+    border: '1px solid var(--border)',
+    borderRadius: 'var(--radius-sm)',
     fontSize: 12,
-    color: '#e1e4e8',
+    color: '#e6edf3',
   };
 
   return (
@@ -107,7 +107,7 @@ export default function StrategyTrace({ report }) {
           <div style={styles.statLabel}>期望值 / 盈亏比</div>
           <div style={styles.statValue}>
             {report.expectancy.toFixed(4)}
-            <span style={{ fontSize: 11, color: '#8b949e' }}>
+            <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>
               {' '}| {report.avg_win > 0 && report.avg_loss < 0
                 ? (report.avg_win / Math.abs(report.avg_loss)).toFixed(2)
                 : '—'}
@@ -231,7 +231,7 @@ export default function StrategyTrace({ report }) {
                 connectNulls
               />
               <Legend
-                wrapperStyle={{ color: '#8b949e', fontSize: 11 }}
+                wrapperStyle={{ color: 'var(--text-secondary)', fontSize: 11 }}
               />
             </ComposedChart>
           </ResponsiveContainer>
@@ -242,7 +242,7 @@ export default function StrategyTrace({ report }) {
       <div style={styles.tableBox}>
         <h3 style={styles.chartTitle}>
           📋 全部开仓节点与入场点位
-          <span style={{ fontSize: 12, color: '#484f58', marginLeft: 12 }}>
+          <span style={{ fontSize: 12, color: 'var(--text-muted)', marginLeft: 12 }}>
             共 {report.total_trades} 笔
           </span>
         </h3>
@@ -275,12 +275,12 @@ export default function StrategyTrace({ report }) {
                       {t.direction === 'UP' ? '📈 看涨' : '📉 看跌'}
                     </span>
                   </td>
-                  <td style={{ ...styles.td, fontFamily: 'monospace' }}>${formatPrice(t.entry_price)}</td>
+                  <td style={{ ...styles.td, fontFamily: 'var(--font-mono)' }}>${formatPrice(t.entry_price)}</td>
                   <td style={styles.td}>{toLocalShort(t.exit_time)}</td>
-                  <td style={{ ...styles.td, fontFamily: 'monospace' }}>${formatPrice(t.exit_price)}</td>
+                  <td style={{ ...styles.td, fontFamily: 'var(--font-mono)' }}>${formatPrice(t.exit_price)}</td>
                   <td style={{
                     ...styles.td,
-                    fontFamily: 'monospace',
+                    fontFamily: 'var(--font-mono)',
                     color: t.pnl >= 0 ? '#3fb950' : '#f85149',
                     fontWeight: 600,
                   }}>
@@ -288,7 +288,7 @@ export default function StrategyTrace({ report }) {
                   </td>
                   <td style={{
                     ...styles.td,
-                    fontFamily: 'monospace',
+                    fontFamily: 'var(--font-mono)',
                     color: t.pnl_pct >= 0 ? '#3fb950' : '#f85149',
                   }}>
                     {t.pnl_pct >= 0 ? '+' : ''}{t.pnl_pct.toFixed(4)}%
@@ -305,7 +305,7 @@ export default function StrategyTrace({ report }) {
                       {t.result === 'WIN' ? '✅ WIN' : '❌ LOSE'}
                     </span>
                   </td>
-                  <td style={{ ...styles.td, fontSize: 11, color: '#8b949e', maxWidth: 260 }}>
+                  <td style={{ ...styles.td, fontSize: 11, color: 'var(--text-secondary)', maxWidth: 260 }}>
                     {t.reason}
                   </td>
                 </tr>
@@ -322,10 +322,10 @@ const styles = {
   empty: {
     textAlign: 'center',
     padding: 80,
-    color: '#484f58',
+    color: 'var(--text-muted)',
   },
   emptyIcon: { fontSize: 48, marginBottom: 16 },
-  emptyTitle: { fontSize: 18, fontWeight: 600, color: '#8b949e', marginBottom: 8 },
+  emptyTitle: { fontSize: 18, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8 },
   emptyDesc: { fontSize: 14, lineHeight: '1.8' },
 
   // 概览卡片
@@ -336,13 +336,13 @@ const styles = {
     marginBottom: 20,
   },
   statCard: {
-    background: '#161b22',
-    border: '1px solid #21262d',
-    borderRadius: 8,
+    background: 'var(--bg-card)',
+    border: '1px solid var(--border)',
+    borderRadius: 'var(--radius)',
     padding: '12px 16px',
   },
-  statLabel: { fontSize: 11, color: '#8b949e', marginBottom: 4 },
-  statValue: { fontSize: 16, fontWeight: 700, fontFamily: 'monospace' },
+  statLabel: { fontSize: 11, color: 'var(--text-secondary)', marginBottom: 4 },
+  statValue: { fontSize: 16, fontWeight: 700, fontFamily: 'var(--font-mono)' },
 
   // 图表双栏
   chartsRow: {
@@ -352,16 +352,16 @@ const styles = {
     marginBottom: 20,
   },
   chartBox: {
-    background: '#161b22',
-    border: '1px solid #21262d',
-    borderRadius: 8,
+    background: 'var(--bg-card)',
+    border: '1px solid var(--border)',
+    borderRadius: 'var(--radius)',
     padding: 20,
   },
   chartTitle: {
     fontSize: 14,
     fontWeight: 600,
     marginBottom: 12,
-    color: '#e1e4e8',
+    color: '#e6edf3',
   },
   chartLegend: {
     display: 'flex',
@@ -369,15 +369,15 @@ const styles = {
     justifyContent: 'center',
     flexWrap: 'wrap',
     fontSize: 12,
-    color: '#8b949e',
+    color: 'var(--text-secondary)',
     marginTop: 8,
   },
 
   // 明细表
   tableBox: {
-    background: '#161b22',
-    border: '1px solid #21262d',
-    borderRadius: 8,
+    background: 'var(--bg-card)',
+    border: '1px solid var(--border)',
+    borderRadius: 'var(--radius)',
     padding: 20,
   },
   scrollTable: {
@@ -388,19 +388,19 @@ const styles = {
     width: '100%',
     borderCollapse: 'collapse',
     fontSize: 12,
-    color: '#e1e4e8',
+    color: '#e6edf3',
   },
   tableHeaderRow: {
     position: 'sticky',
     top: 0,
-    background: '#0d1117',
+    background: 'var(--bg-deep)',
     zIndex: 1,
   },
   th: {
     padding: '8px 12px',
     textAlign: 'left',
     borderBottom: '1px solid #30363d',
-    color: '#8b949e',
+    color: 'var(--text-secondary)',
     fontWeight: 600,
     fontSize: 11,
     whiteSpace: 'nowrap',

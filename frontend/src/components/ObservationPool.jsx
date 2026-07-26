@@ -69,10 +69,10 @@ export default function ObservationPool({ onLockChange }) {
     if (total === 0) {
       return (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
-          <span style={{ color: '#484f58', fontSize: 11 }}>—</span>
+          <span style={{ color: 'var(--text-muted)', fontSize: 11 }}>—</span>
           <button onClick={() => handleLock(sid, name, dur, 'BTC_USDT')}
             style={{ padding: '1px 6px', borderRadius: 4, fontSize: 11, cursor: 'pointer',
-              background: '#21262d', color: '#484f58', border: '1px solid #30363d' }}>
+              background: '#21262d', color: 'var(--text-muted)', border: '1px solid var(--border)' }}>
             🔓
           </button>
         </div>
@@ -81,12 +81,12 @@ export default function ObservationPool({ onLockChange }) {
     const wr = (d.wins / total * 100).toFixed(0);
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
-        <span style={{ fontFamily: 'monospace', fontSize: 11, color: +wr >= 50 ? '#3fb950' : '#f85149' }}>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: +wr >= 50 ? '#3fb950' : '#f85149' }}>
           {d.wins}W/{d.losses}L ({wr}%)
         </span>
         <button onClick={() => handleLock(sid, name, dur, 'BTC_USDT')}
           style={{ padding: '1px 6px', borderRadius: 4, fontSize: 11, cursor: 'pointer',
-            background: '#21262d', color: '#484f58', border: '1px solid #30363d' }}>
+            background: '#21262d', color: 'var(--text-muted)', border: '1px solid var(--border)' }}>
           🔓
         </button>
       </div>
@@ -94,17 +94,17 @@ export default function ObservationPool({ onLockChange }) {
   };
 
   return (
-    <div style={{ background: '#161b22', border: '1px solid #21262d', borderRadius: 8, padding: 16, marginTop: 12 }}>
+    <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: 16, marginTop: 12 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-        <h3 style={{ fontSize: 14, fontWeight: 600, margin: 0, color: '#e1e4e8' }}>
+        <h3 style={{ fontSize: 14, fontWeight: 600, margin: 0, color: '#e6edf3' }}>
           🔍 观测池
-          <span style={{ fontSize: 11, color: '#484f58', marginLeft: 8 }}>
+          <span style={{ fontSize: 11, color: 'var(--text-muted)', marginLeft: 8 }}>
             OPEN {pool.open_count} | CLOSED {pool.closed_count} 笔 | {allStrategies.length} 策略
           </span>
         </h3>
         <button onClick={handleReset}
-          style={{ padding: '4px 12px', borderRadius: 6, fontSize: 12, fontWeight: 600,
-            background: '#21262d', color: '#f85149', border: '1px solid #30363d', cursor: 'pointer' }}>
+          style={{ padding: '4px 12px', borderRadius: 'var(--radius-sm)', fontSize: 12, fontWeight: 600,
+            background: '#21262d', color: '#f85149', border: '1px solid var(--border)', cursor: 'pointer' }}>
           🔄 重新初始化
         </button>
       </div>
@@ -112,9 +112,9 @@ export default function ObservationPool({ onLockChange }) {
         <div style={{ fontSize: 12, color: '#d29922', marginBottom: 6 }}>{message}</div>
       )}
       <div style={{ maxHeight: 400, overflowY: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12, color: '#e1e4e8' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12, color: '#e6edf3' }}>
           <thead>
-            <tr style={{ position: 'sticky', top: 0, zIndex: 2, background: '#0d1117' }}>
+            <tr style={{ position: 'sticky', top: 0, zIndex: 2, background: 'var(--bg-deep)' }}>
               <th style={th}>策略</th>
               <th style={{ ...th, textAlign: 'center' }}>3min</th>
               <th style={{ ...th, textAlign: 'center' }}>5min</th>
@@ -138,5 +138,5 @@ export default function ObservationPool({ onLockChange }) {
   );
 }
 
-const th = { padding: '8px 8px', fontSize: 12, fontWeight: 600, color: '#8b949e', borderBottom: '1px solid #21262d', textAlign: 'left' };
+const th = { padding: '8px 8px', fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', borderBottom: '1px solid #21262d', textAlign: 'left' };
 const td = { padding: '6px 8px', fontSize: 12, borderBottom: '1px solid #0d1117' };

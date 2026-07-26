@@ -142,11 +142,11 @@ export default function BacktestPanel({ onTrace }) {
           <span style={{ fontSize: 11, color: '#3fb950' }}>≥</span>
           <input type="number" value={minWin} onChange={e => setMinWin(Math.max(0, Math.min(100, +e.target.value)))}
             style={{ ...styles.input, width: 42 }} min={0} max={100} />
-          <span style={{ fontSize: 11, color: '#8b949e' }}>%</span>
+          <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>%</span>
           <span style={{ fontSize: 11, color: '#f85149', marginLeft: 4 }}>≤</span>
           <input type="number" value={maxWin} onChange={e => setMaxWin(Math.max(0, Math.min(100, +e.target.value)))}
             style={{ ...styles.input, width: 42 }} min={0} max={100} />
-          <span style={{ fontSize: 11, color: '#8b949e' }}>%</span>
+          <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>%</span>
         </div>
         <button onClick={handleRun} disabled={loading} style={styles.runBtn}>
           {loading ? '⏳ 回测中...' : '▶ 运行回测'}
@@ -227,12 +227,12 @@ export default function BacktestPanel({ onTrace }) {
                           {(r.win_rate * 100).toFixed(1)}%
                         </span>
                       </td>
-                      <td style={{ color: r.net_pnl >= 0 ? '#3fb950' : '#f85149', fontFamily: 'monospace' }}>
+                      <td style={{ color: r.net_pnl >= 0 ? '#3fb950' : '#f85149', fontFamily: 'var(--font-mono)' }}>
                         {r.net_pnl >= 0 ? '+' : ''}{r.net_pnl}
                       </td>
-                      <td style={{ fontFamily: 'monospace' }}>{r.expectancy}</td>
-                      <td style={{ color: '#3fb950', fontFamily: 'monospace' }}>{r.avg_win}</td>
-                      <td style={{ color: '#f85149', fontFamily: 'monospace' }}>{r.avg_loss}</td>
+                      <td style={{ fontFamily: 'var(--font-mono)' }}>{r.expectancy}</td>
+                      <td style={{ color: '#3fb950', fontFamily: 'var(--font-mono)' }}>{r.avg_win}</td>
+                      <td style={{ color: '#f85149', fontFamily: 'var(--font-mono)' }}>{r.avg_loss}</td>
                       <td>
                         <div style={styles.actionRow}>
                           <button
@@ -330,9 +330,9 @@ const styles = {
     gap: 16,
     flexWrap: 'wrap',
     padding: '16px 20px',
-    background: '#161b22',
-    border: '1px solid #21262d',
-    borderRadius: 8,
+    background: 'var(--bg-card)',
+    border: '1px solid var(--border)',
+    borderRadius: 'var(--radius)',
     marginBottom: 16,
   },
   field: {
@@ -342,47 +342,47 @@ const styles = {
   },
   label: {
     fontSize: 13,
-    color: '#8b949e',
+    color: 'var(--text-secondary)',
   },
   select: {
     padding: '6px 12px',
-    background: '#0d1117',
-    color: '#e1e4e8',
-    border: '1px solid #30363d',
-    borderRadius: 6,
+    background: 'var(--bg-deep)',
+    color: '#e6edf3',
+    border: '1px solid var(--border)',
+    borderRadius: 'var(--radius-sm)',
     fontSize: 13,
   },
   input: {
     width: 60,
     padding: '6px 8px',
-    background: '#0d1117',
-    color: '#e1e4e8',
-    border: '1px solid #30363d',
-    borderRadius: 6,
+    background: 'var(--bg-deep)',
+    color: '#e6edf3',
+    border: '1px solid var(--border)',
+    borderRadius: 'var(--radius-sm)',
     fontSize: 13,
     textAlign: 'center',
   },
   unit: {
     fontSize: 12,
-    color: '#8b949e',
+    color: 'var(--text-secondary)',
   },
   runBtn: {
     padding: '8px 24px',
     background: '#238636',
     color: '#fff',
     border: 'none',
-    borderRadius: 6,
+    borderRadius: 'var(--radius-sm)',
     fontSize: 14,
     fontWeight: 600,
   },
   autoLabel: {
     fontSize: 12,
-    color: '#8b949e',
+    color: 'var(--text-secondary)',
     marginLeft: 'auto',
   },
   summary: {
     fontSize: 12,
-    color: '#8b949e',
+    color: 'var(--text-secondary)',
     marginBottom: 16,
   },
   group: {
@@ -392,7 +392,7 @@ const styles = {
     fontSize: 15,
     fontWeight: 600,
     marginBottom: 8,
-    color: '#e1e4e8',
+    color: '#e6edf3',
   },
   tableWrap: {
     overflowX: 'auto',
@@ -420,16 +420,16 @@ const styles = {
   traceBtn: {
     padding: '4px 12px',
     background: '#21262d',
-    color: '#8b949e',
-    border: '1px solid #30363d',
+    color: 'var(--text-secondary)',
+    border: '1px solid var(--border)',
     borderRadius: 4,
     fontSize: 12,
   },
   lockBtn: {
     padding: '4px 12px',
     background: '#21262d',
-    color: '#8b949e',
-    border: '1px solid #30363d',
+    color: 'var(--text-secondary)',
+    border: '1px solid var(--border)',
     borderRadius: 4,
     fontSize: 12,
     fontWeight: 500,
@@ -448,7 +448,7 @@ const styles = {
     fontSize: 10,
     fontWeight: 700,
     cursor: 'pointer',
-    fontFamily: 'monospace',
+    fontFamily: 'var(--font-mono)',
     transition: 'all 0.1s',
   },
   symBtnBig: {
@@ -458,7 +458,7 @@ const styles = {
     fontSize: 12,
     fontWeight: 700,
     cursor: 'pointer',
-    fontFamily: 'monospace',
+    fontFamily: 'var(--font-mono)',
     transition: 'all 0.15s',
   },
   lockedBadge: {
@@ -467,7 +467,7 @@ const styles = {
     borderRadius: 4,
     fontSize: 11,
     fontWeight: 700,
-    fontFamily: 'monospace',
+    fontFamily: 'var(--font-mono)',
   },
   unlockBtnSmall: {
     padding: '3px 8px',
@@ -486,7 +486,7 @@ const styles = {
   },
   lockMsg: {
     padding: '8px 16px',
-    borderRadius: 6,
+    borderRadius: 'var(--radius-sm)',
     marginBottom: 12,
     fontSize: 13,
     fontWeight: 500,
@@ -494,7 +494,7 @@ const styles = {
   empty: {
     textAlign: 'center',
     padding: 60,
-    color: '#484f58',
+    color: 'var(--text-muted)',
     fontSize: 15,
   },
 };
