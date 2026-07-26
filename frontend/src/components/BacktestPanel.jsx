@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { runBacktest, lockStrategy, unlockStrategy, getStrategies, getReports, getAccount } from '../api';
 
 const DURATIONS = [3, 5, 10];
-const COLORS = { BTC_USDT: '#fff', ETH_USDT: '#aaa' };
+const COLORS = { BTC_USDT: 'var(--text)', ETH_USDT: 'var(--text-secondary)' };
 
 export default function BacktestPanel({ onTrace }) {
   const [symbol, setSymbol] = useState('BTC_USDT');
@@ -139,11 +139,11 @@ export default function BacktestPanel({ onTrace }) {
         </div>
         <div style={styles.field}>
           <label style={styles.label}>胜率</label>
-          <span style={{ fontSize: 11, color: '#fff' }}>≥</span>
+          <span style={{ fontSize: 11, color: 'var(--text)' }}>≥</span>
           <input type="number" value={minWin} onChange={e => setMinWin(Math.max(0, Math.min(100, +e.target.value)))}
             style={{ ...styles.input, width: 42 }} min={0} max={100} />
           <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>%</span>
-          <span style={{ fontSize: 11, color: '#555', marginLeft: 4 }}>≤</span>
+          <span style={{ fontSize: 11, color: 'var(--down)', marginLeft: 4 }}>≤</span>
           <input type="number" value={maxWin} onChange={e => setMaxWin(Math.max(0, Math.min(100, +e.target.value)))}
             style={{ ...styles.input, width: 42 }} min={0} max={100} />
           <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>%</span>
@@ -166,12 +166,12 @@ export default function BacktestPanel({ onTrace }) {
         共 <b>{strategies.length}</b> 条策略 × <b>{DURATIONS.length}</b> 个合约时长
         = <b>{strategies.length * DURATIONS.length}</b> 个回测组合
         {reports.length > 0 && (
-          <> | 筛选结果: <b style={{ color: '#fff' }}>{reports.length}</b> 条
-            (≥{minWin}%: <b style={{ color: '#fff' }}>{reports.filter(r => r.win_rate >= minWin/100).length}</b>
-            {' '}≤{maxWin}%: <b style={{ color: '#555' }}>{reports.filter(r => r.win_rate <= maxWin/100).length}</b>)
+          <> | 筛选结果: <b style={{ color: 'var(--text)' }}>{reports.length}</b> 条
+            (≥{minWin}%: <b style={{ color: 'var(--text)' }}>{reports.filter(r => r.win_rate >= minWin/100).length}</b>
+            {' '}≤{maxWin}%: <b style={{ color: 'var(--down)' }}>{reports.filter(r => r.win_rate <= maxWin/100).length}</b>)
           </>)}
         {Object.values(lockedMap).some(arr => arr.length > 0) && (
-          <> | 已锁定: <b style={{ color: '#fff' }}>
+          <> | 已锁定: <b style={{ color: 'var(--text)' }}>
             {Object.entries(lockedMap).filter(([,arr]) => arr.length > 0).map(([k, arr]) => `${k}m×${arr.length}`).join(', ')}
           </b></>
         )}
@@ -179,7 +179,7 @@ export default function BacktestPanel({ onTrace }) {
       {lockMsg && (
         <div style={{
           ...styles.lockMsg,
-          color: lockMsg.includes('失败') ? '#555' : '#fff',
+          color: lockMsg.includes('失败') ? 'var(--down)' : 'var(--text)',
         }}>
           {lockMsg}
         </div>
@@ -218,21 +218,21 @@ export default function BacktestPanel({ onTrace }) {
                         {r.strategy_name}
                       </td>
                       <td>{r.total_trades}</td>
-                      <td style={{ color: '#fff' }}>{r.wins}</td>
+                      <td style={{ color: 'var(--text)' }}>{r.wins}</td>
                       <td>
                         <span style={{
-                          color: r.win_rate >= 0.75 ? '#fff' : r.win_rate >= 0.5 ? '#888' : '#555',
+                          color: r.win_rate >= 0.75 ? 'var(--text)' : r.win_rate >= 0.5 ? 'var(--text-secondary)' : 'var(--down)',
                           fontWeight: 600,
                         }}>
                           {(r.win_rate * 100).toFixed(1)}%
                         </span>
                       </td>
-                      <td style={{ color: r.net_pnl >= 0 ? '#fff' : '#555', fontFamily: 'var(--font-mono)' }}>
+                      <td style={{ color: r.net_pnl >= 0 ? 'var(--text)' : 'var(--down)', fontFamily: 'var(--font-mono)' }}>
                         {r.net_pnl >= 0 ? '+' : ''}{r.net_pnl}
                       </td>
                       <td style={{ fontFamily: 'var(--font-mono)' }}>{r.expectancy}</td>
-                      <td style={{ color: '#fff', fontFamily: 'var(--font-mono)' }}>{r.avg_win}</td>
-                      <td style={{ color: '#555', fontFamily: 'var(--font-mono)' }}>{r.avg_loss}</td>
+                      <td style={{ color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>{r.avg_win}</td>
+                      <td style={{ color: 'var(--down)', fontFamily: 'var(--font-mono)' }}>{r.avg_loss}</td>
                       <td>
                         <div style={styles.actionRow}>
                           <button
@@ -255,12 +255,12 @@ export default function BacktestPanel({ onTrace }) {
                                     <span style={{
                                       ...styles.lockedBadge,
                                       background: sym === 'BTC_USDT' ? '#f7931a25' : '#627eea25',
-                                      color: sym === 'BTC_USDT' ? '#fff' : '#aaa',
+                                      color: sym === 'BTC_USDT' ? 'var(--text)' : 'var(--text-secondary)',
                                       borderColor: sym === 'BTC_USDT' ? '#f7931a55' : '#627eea55',
                                     }}>
                                       {sym === 'BTC_USDT' ? 'BTC' : 'ETH'}
                                     </span>
-                                    <span style={{ fontSize: 12, color: '#fff', fontWeight: 600 }}>已锁定</span>
+                                    <span style={{ fontSize: 12, color: 'var(--text)', fontWeight: 600 }}>已锁定</span>
                                     <button
                                       onClick={() => handleLock(r.duration, r.strategy_id, r.strategy_name, sym)}
                                       style={styles.unlockBtnSmall}
@@ -275,18 +275,18 @@ export default function BacktestPanel({ onTrace }) {
                                       onClick={(e) => { e.stopPropagation(); setRowSymbols(p => ({...p, [rowKey]: 'BTC_USDT'})); }}
                                       style={{
                                         ...styles.symBtnBig,
-                                        background: rowSym === 'BTC_USDT' ? '#f7931a30' : '#0d1117',
-                                        color: rowSym === 'BTC_USDT' ? '#fff' : '#8b949e',
-                                        borderColor: rowSym === 'BTC_USDT' ? '#fff' : '#30363d',
+                                        background: rowSym === 'BTC_USDT' ? 'var(--accent-dim)' : 'var(--bg)',
+                                        color: rowSym === 'BTC_USDT' ? 'var(--text)' : 'var(--text-secondary)',
+                                        borderColor: rowSym === 'BTC_USDT' ? 'var(--text)' : 'var(--border-light)',
                                       }}
                                     >BTC</button>
                                     <button
                                       onClick={(e) => { e.stopPropagation(); setRowSymbols(p => ({...p, [rowKey]: 'ETH_USDT'})); }}
                                       style={{
                                         ...styles.symBtnBig,
-                                        background: rowSym === 'ETH_USDT' ? '#627eea30' : '#0d1117',
-                                        color: rowSym === 'ETH_USDT' ? '#aaa' : '#8b949e',
-                                        borderColor: rowSym === 'ETH_USDT' ? '#aaa' : '#30363d',
+                                        background: rowSym === 'ETH_USDT' ? 'rgba(255,255,255,.04)' : 'var(--bg)',
+                                        color: rowSym === 'ETH_USDT' ? 'var(--text-secondary)' : 'var(--text-secondary)',
+                                        borderColor: rowSym === 'ETH_USDT' ? 'var(--text-secondary)' : 'var(--border-light)',
                                       }}
                                     >ETH</button>
                                     <button
@@ -347,7 +347,7 @@ const styles = {
   select: {
     padding: '6px 12px',
     background: 'var(--bg)',
-    color: '#e6edf3',
+    color: 'var(--text)',
     border: '1px solid var(--border)',
     borderRadius: 'var(--radius)',
     fontSize: 13,
@@ -356,7 +356,7 @@ const styles = {
     width: 60,
     padding: '6px 8px',
     background: 'var(--bg)',
-    color: '#e6edf3',
+    color: 'var(--text)',
     border: '1px solid var(--border)',
     borderRadius: 'var(--radius)',
     fontSize: 13,
@@ -368,8 +368,8 @@ const styles = {
   },
   runBtn: {
     padding: '8px 24px',
-    background: '#333',
-    color: '#fff',
+    background: 'var(--surface-hover)',
+    color: 'var(--text)',
     border: 'none',
     borderRadius: 'var(--radius)',
     fontSize: 14,
@@ -392,7 +392,7 @@ const styles = {
     fontSize: 15,
     fontWeight: 600,
     marginBottom: 8,
-    color: '#e6edf3',
+    color: 'var(--text)',
   },
   tableWrap: {
     overflowX: 'auto',
@@ -403,10 +403,10 @@ const styles = {
     fontSize: 13,
   },
   rowQualified: {
-    background: '#1a3a2a',
+    background: 'var(--accent-dim)',
   },
   badge: {
-    color: '#fff',
+    color: 'var(--text)',
     marginRight: 4,
   },
   stratName: {
@@ -419,7 +419,7 @@ const styles = {
   },
   traceBtn: {
     padding: '4px 12px',
-    background: '#21262d',
+    background: 'var(--surface-hover)',
     color: 'var(--text-secondary)',
     border: '1px solid var(--border)',
     borderRadius: 4,
@@ -427,7 +427,7 @@ const styles = {
   },
   lockBtn: {
     padding: '4px 12px',
-    background: '#21262d',
+    background: 'var(--surface-hover)',
     color: 'var(--text-secondary)',
     border: '1px solid var(--border)',
     borderRadius: 4,
@@ -438,8 +438,8 @@ const styles = {
   },
   lockBtnActive: {
     background: 'rgba(255,255,255,.08)',
-    color: '#fff',
-    borderColor: '#fff',
+    color: 'var(--text)',
+    borderColor: 'var(--text)',
   },
   symBtn: {
     padding: '2px 6px',
@@ -472,15 +472,15 @@ const styles = {
   unlockBtnSmall: {
     padding: '3px 8px',
     background: 'transparent',
-    color: '#555',
+    color: 'var(--down)',
     border: '1px solid #f8514955',
     borderRadius: 4,
     fontSize: 11,
     cursor: 'pointer',
   },
   lockBtnQualified: {
-    background: '#333',
-    color: '#fff',
+    background: 'var(--surface-hover)',
+    color: 'var(--text)',
     border: 'none',
     fontWeight: 600,
   },

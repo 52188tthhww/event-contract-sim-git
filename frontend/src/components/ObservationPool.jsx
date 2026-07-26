@@ -72,7 +72,7 @@ export default function ObservationPool({ onLockChange }) {
           <span style={{ color: 'var(--text-muted)', fontSize: 11 }}>—</span>
           <button onClick={() => handleLock(sid, name, dur, 'BTC_USDT')}
             style={{ padding: '1px 6px', borderRadius: 4, fontSize: 11, cursor: 'pointer',
-              background: '#21262d', color: 'var(--text-muted)', border: '1px solid var(--border)' }}>
+              background: 'var(--surface-hover)', color: 'var(--text-muted)', border: '1px solid var(--border)' }}>
             🔓
           </button>
         </div>
@@ -81,12 +81,12 @@ export default function ObservationPool({ onLockChange }) {
     const wr = (d.wins / total * 100).toFixed(0);
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: +wr >= 50 ? '#fff' : '#555' }}>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: +wr >= 50 ? 'var(--text)' : 'var(--down)' }}>
           {d.wins}W/{d.losses}L ({wr}%)
         </span>
         <button onClick={() => handleLock(sid, name, dur, 'BTC_USDT')}
           style={{ padding: '1px 6px', borderRadius: 4, fontSize: 11, cursor: 'pointer',
-            background: '#21262d', color: 'var(--text-muted)', border: '1px solid var(--border)' }}>
+            background: 'var(--surface-hover)', color: 'var(--text-muted)', border: '1px solid var(--border)' }}>
           🔓
         </button>
       </div>
@@ -96,7 +96,7 @@ export default function ObservationPool({ onLockChange }) {
   return (
     <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: 16, marginTop: 12 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, flexWrap: 'wrap', gap: 6 }}>
-        <h3 style={{ fontSize: 14, fontWeight: 600, margin: 0, color: '#e6edf3' }}>
+        <h3 style={{ fontSize: 14, fontWeight: 600, margin: 0, color: 'var(--text)' }}>
           🔍 观测池
           <span style={{ fontSize: 11, color: 'var(--text-muted)', marginLeft: 8 }}>
             OPEN {pool.open_count} | CLOSED {pool.closed_count} | {activeCount}/{allStrategies.length} 活跃
@@ -105,22 +105,22 @@ export default function ObservationPool({ onLockChange }) {
         <div style={{ display: 'flex', gap: 6 }}>
           <button onClick={() => setShowAll(!showAll)}
             style={{ padding: '4px 10px', borderRadius: 'var(--radius)', fontSize: 11, fontWeight: 600,
-              background: showAll ? 'rgba(255,255,255,.06)' : '#21262d', color: showAll ? 'var(--accent)' : 'var(--text-secondary)',
+              background: showAll ? 'rgba(255,255,255,.06)' : 'var(--surface-hover)', color: showAll ? 'var(--accent)' : 'var(--text-secondary)',
               border: '1px solid var(--border)', cursor: 'pointer' }}>
             {showAll ? '✓ 活跃' : '☰ 全部'}
           </button>
           <button onClick={handleReset}
             style={{ padding: '4px 10px', borderRadius: 'var(--radius)', fontSize: 11, fontWeight: 600,
-              background: '#21262d', color: '#555', border: '1px solid var(--border)', cursor: 'pointer' }}>
+              background: 'var(--surface-hover)', color: 'var(--down)', border: '1px solid var(--border)', cursor: 'pointer' }}>
             🔄
           </button>
         </div>
       </div>
       {message && (
-        <div style={{ fontSize: 12, color: '#888', marginBottom: 6 }}>{message}</div>
+        <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 6 }}>{message}</div>
       )}
       <div style={{ maxHeight: 400, overflowY: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12, color: '#e6edf3' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12, color: 'var(--text)' }}>
           <thead>
             <tr style={{ position: 'sticky', top: 0, zIndex: 2, background: 'var(--bg)' }}>
               <th style={th}>策略</th>

@@ -64,7 +64,7 @@ export default function StrategyTrace({ report }) {
     border: '1px solid var(--border)',
     borderRadius: 'var(--radius)',
     fontSize: 12,
-    color: '#e6edf3',
+    color: 'var(--text)',
   };
 
   return (
@@ -81,7 +81,7 @@ export default function StrategyTrace({ report }) {
         </div>
         <div style={styles.statCard}>
           <div style={styles.statLabel}>胜率</div>
-          <div style={{ ...styles.statValue, color: report.win_rate >= 0.75 ? '#fff' : '#888' }}>
+          <div style={{ ...styles.statValue, color: report.win_rate >= 0.75 ? 'var(--text)' : 'var(--text-secondary)' }}>
             {(report.win_rate * 100).toFixed(1)}%
           </div>
         </div>
@@ -98,7 +98,7 @@ export default function StrategyTrace({ report }) {
           <div style={styles.statLabel}>净盈亏</div>
           <div style={{
             ...styles.statValue,
-            color: report.net_pnl >= 0 ? '#fff' : '#555',
+            color: report.net_pnl >= 0 ? 'var(--text)' : 'var(--down)',
           }}>
             {report.net_pnl >= 0 ? '+' : ''}{report.net_pnl.toFixed(4)}
           </div>
@@ -128,7 +128,7 @@ export default function StrategyTrace({ report }) {
                 dataKey="index"
                 stroke="#484f58"
                 fontSize={11}
-                label={{ value: '交易序号', position: 'bottom', fill: '#8b949e', fontSize: 11, offset: -5 }}
+                label={{ value: '交易序号', position: 'bottom', fill: 'var(--text-secondary)', fontSize: 11, offset: -5 }}
               />
               <YAxis
                 stroke="#484f58"
@@ -169,7 +169,7 @@ export default function StrategyTrace({ report }) {
                 {chartData.map((d, i) => (
                   <rect
                     key={i}
-                    fill={d.result === 'WIN' ? '#fff' : '#555'}
+                    fill={d.result === 'WIN' ? 'var(--text)' : 'var(--down)'}
                     opacity={0.7}
                   />
                 ))}
@@ -195,7 +195,7 @@ export default function StrategyTrace({ report }) {
                 dataKey="index"
                 stroke="#484f58"
                 fontSize={11}
-                label={{ value: '交易序号', position: 'bottom', fill: '#8b949e', fontSize: 11, offset: -5 }}
+                label={{ value: '交易序号', position: 'bottom', fill: 'var(--text-secondary)', fontSize: 11, offset: -5 }}
               />
               <YAxis
                 stroke="#484f58"
@@ -218,7 +218,7 @@ export default function StrategyTrace({ report }) {
                 name="入场价"
                 stroke="#58a6ff"
                 strokeWidth={1.5}
-                dot={{ r: 3, fill: '#fff' }}
+                dot={{ r: 3, fill: 'var(--text)' }}
                 connectNulls
               />
               <Line
@@ -227,7 +227,7 @@ export default function StrategyTrace({ report }) {
                 name="出场价"
                 stroke="#d29922"
                 strokeWidth={1.5}
-                dot={{ r: 3, fill: '#888' }}
+                dot={{ r: 3, fill: 'var(--text-secondary)' }}
                 connectNulls
               />
               <Legend
@@ -269,7 +269,7 @@ export default function StrategyTrace({ report }) {
                   <td style={styles.td}>{toLocalShort(t.entry_time)}</td>
                   <td style={styles.td}>
                     <span style={{
-                      color: t.direction === 'UP' ? '#fff' : '#555',
+                      color: t.direction === 'UP' ? 'var(--text)' : 'var(--down)',
                       fontWeight: 600,
                     }}>
                       {t.direction === 'UP' ? '📈 看涨' : '📉 看跌'}
@@ -281,7 +281,7 @@ export default function StrategyTrace({ report }) {
                   <td style={{
                     ...styles.td,
                     fontFamily: 'var(--font-mono)',
-                    color: t.pnl >= 0 ? '#fff' : '#555',
+                    color: t.pnl >= 0 ? 'var(--text)' : 'var(--down)',
                     fontWeight: 600,
                   }}>
                     {t.pnl >= 0 ? '+' : ''}{t.pnl.toFixed(4)}
@@ -289,7 +289,7 @@ export default function StrategyTrace({ report }) {
                   <td style={{
                     ...styles.td,
                     fontFamily: 'var(--font-mono)',
-                    color: t.pnl_pct >= 0 ? '#fff' : '#555',
+                    color: t.pnl_pct >= 0 ? 'var(--text)' : 'var(--down)',
                   }}>
                     {t.pnl_pct >= 0 ? '+' : ''}{t.pnl_pct.toFixed(4)}%
                   </td>
@@ -299,8 +299,8 @@ export default function StrategyTrace({ report }) {
                       borderRadius: 10,
                       fontSize: 11,
                       fontWeight: 600,
-                      background: t.result === 'WIN' ? '#1a3a2a' : '#3a1a1a',
-                      color: t.result === 'WIN' ? '#fff' : '#555',
+                      background: t.result === 'WIN' ? 'var(--accent-dim)' : 'rgba(255,255,255,.03)',
+                      color: t.result === 'WIN' ? 'var(--text)' : 'var(--down)',
                     }}>
                       {t.result === 'WIN' ? '✅ WIN' : '❌ LOSE'}
                     </span>
@@ -361,7 +361,7 @@ const styles = {
     fontSize: 14,
     fontWeight: 600,
     marginBottom: 12,
-    color: '#e6edf3',
+    color: 'var(--text)',
   },
   chartLegend: {
     display: 'flex',
@@ -388,7 +388,7 @@ const styles = {
     width: '100%',
     borderCollapse: 'collapse',
     fontSize: 12,
-    color: '#e6edf3',
+    color: 'var(--text)',
   },
   tableHeaderRow: {
     position: 'sticky',

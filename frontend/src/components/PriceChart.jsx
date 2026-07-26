@@ -19,8 +19,8 @@ const ChartTooltip = ({ active, payload, label, symbol }) => {
   const time = d.toLocaleTimeString();
   const price = payload[0]?.value;
   return (
-    <div style={{ background: '#0d1117', border: '1px solid rgba(255,255,255,.12)', borderRadius: 8, padding: '10px 14px', fontSize: 13 }}>
-      <div style={{ color: '#8896a4', fontSize: 11, marginBottom: 4 }}>{time}</div>
+    <div style={{ background: 'var(--bg)', border: '1px solid rgba(255,255,255,.12)', borderRadius: 8, padding: '10px 14px', fontSize: 13 }}>
+      <div style={{ color: 'var(--text-secondary)', fontSize: 11, marginBottom: 4 }}>{time}</div>
       <div style={{ color: COLORS[symbol], fontWeight: 600, fontFamily: 'var(--font-mono)', fontSize: 15 }}>
         ${price?.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 2 })}
       </div>
@@ -128,7 +128,7 @@ export default function PriceChart() {
               </div>
               <div style={{
                 ...styles.cardChange,
-                color: change >= 0 ? 'var(--accent)' : '#555',
+                color: change >= 0 ? 'var(--accent)' : 'var(--down)',
               }}>
                 {change >= 0 ? '↑' : '↓'} {Math.abs(change)}%
               </div>
