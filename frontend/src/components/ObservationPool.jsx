@@ -1,6 +1,7 @@
 /**
  * 观测池面板 — 独立组件，嵌入 SimAccount
  * 展示全部策略，每策略×时长独立锁定按钮
+ * 默认只显示有交易数据的策略，减少渲染压力
  */
 import React, { useEffect, useState } from 'react';
 import { getPoolStats, resetPool, lockStrategy, unlockStrategy } from '../ext_api';
@@ -12,17 +13,16 @@ export default function ObservationPool({ onLockChange }) {
   const [pool, setPool] = useState({ stats: {}, open_count: 0, closed_count: 0 });
   const [allStrategies, setAllStrategies] = useState([]);
   const [message, setMessage] = useState('');
+  const [showAll, setShowAll] = useState(false);
 
-  // 全策略列表（只加载一次）
   useEffect(() => {
     axios.get(`${API}/strategies`).then(r => setAllStrategies(r.data.strategies || [])).catch(() => {});
   }, []);
 
-  // 5 秒轮询观测池数据
   useEffect(() => {
     const fetch = () => getPoolStats().then(setPool).catch(() => {});
     fetch();
-    const iv = setInterval(fetch, 5000);
+    const iv = setInterval(fetch, 10000);
     return () => clearInterval(iv);
   }, []);
 
@@ -49,7 +49,6 @@ export default function ObservationPool({ onLockChange }) {
 
   const stats = pool.stats || {};
 
-  // 合并全策略列表与观测池数据
   const merged = allStrategies.map(s => ({
     id: s.id,
     name: s.name,
@@ -61,8 +60,9 @@ export default function ObservationPool({ onLockChange }) {
             (stats[s.id]?.['10']?.wins||0)+(stats[s.id]?.['10']?.losses||0)),
   }));
 
-  // 有数据的排前面
   merged.sort((a, b) => b.total - a.total);
+  const activeCount = merged.filter(s => s.total > 0).length;
+  const displayed = showAll ? merged : merged.filter(s => s.total > 0);
 
   const renderCell = (d, dur, sid, name) => {
     const total = d.wins + d.losses;
@@ -95,18 +95,26 @@ export default function ObservationPool({ onLockChange }) {
 
   return (
     <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: 16, marginTop: 12 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, flexWrap: 'wrap', gap: 6 }}>
         <h3 style={{ fontSize: 14, fontWeight: 600, margin: 0, color: '#e6edf3' }}>
           🔍 观测池
           <span style={{ fontSize: 11, color: 'var(--text-muted)', marginLeft: 8 }}>
-            OPEN {pool.open_count} | CLOSED {pool.closed_count} 笔 | {allStrategies.length} 策略
+            OPEN {pool.open_count} | CLOSED {pool.closed_count} | {activeCount}/{allStrategies.length} 活跃
           </span>
         </h3>
-        <button onClick={handleReset}
-          style={{ padding: '4px 12px', borderRadius: 'var(--radius-sm)', fontSize: 12, fontWeight: 600,
-            background: '#21262d', color: '#f85149', border: '1px solid var(--border)', cursor: 'pointer' }}>
-          🔄 重新初始化
-        </button>
+        <div style={{ display: 'flex', gap: 6 }}>
+          <button onClick={() => setShowAll(!showAll)}
+            style={{ padding: '4px 10px', borderRadius: 'var(--radius-sm)', fontSize: 11, fontWeight: 600,
+              background: showAll ? 'var(--accent-dim)' : '#21262d', color: showAll ? 'var(--accent)' : 'var(--text-secondary)',
+              border: '1px solid var(--border)', cursor: 'pointer' }}>
+            {showAll ? '✓ 活跃' : '☰ 全部'}
+          </button>
+          <button onClick={handleReset}
+            style={{ padding: '4px 10px', borderRadius: 'var(--radius-sm)', fontSize: 11, fontWeight: 600,
+              background: '#21262d', color: '#f85149', border: '1px solid var(--border)', cursor: 'pointer' }}>
+            🔄
+          </button>
+        </div>
       </div>
       {message && (
         <div style={{ fontSize: 12, color: '#d29922', marginBottom: 6 }}>{message}</div>
@@ -122,7 +130,7 @@ export default function ObservationPool({ onLockChange }) {
             </tr>
           </thead>
           <tbody>
-            {merged.map(s => (
+            {displayed.map(s => (
               <tr key={s.id}>
                 <td style={{ ...td, maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                     title={s.name}>{s.name}</td>

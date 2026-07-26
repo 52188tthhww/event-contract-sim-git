@@ -191,7 +191,7 @@ export default function SimAccount() {
   // 实时轮询（立刻开始，不等待历史）
   useEffect(() => {
     refresh();
-    const iv = setInterval(refresh, 2000);
+    const iv = setInterval(refresh, 3000);
     return () => clearInterval(iv);
   }, [refresh]);
 

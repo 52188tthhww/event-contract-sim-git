@@ -83,7 +83,7 @@ export default function PriceChart() {
       } catch (_) {}
     };
     fetchPrices();
-    timerRef.current = setInterval(fetchPrices, 2000);
+    timerRef.current = setInterval(fetchPrices, 3000);
     return () => clearInterval(timerRef.current);
   }, []);
 
