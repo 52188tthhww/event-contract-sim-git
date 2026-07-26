@@ -1,9 +1,12 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import PriceChart from './components/PriceChart';
-import BacktestPanel from './components/BacktestPanel';
-import StrategyTrace from './components/StrategyTrace';
-import SimAccount from './components/SimAccount';
+import React, { useState, useCallback, useEffect, Suspense, lazy } from 'react';
 import { getPrices } from './api';
+
+// ═══ Lazy-load tab components for code splitting ═══
+// Recharts (~150KB+) is only loaded when a chart tab is first visited
+const PriceChart = lazy(() => import('./components/PriceChart'));
+const BacktestPanel = lazy(() => import('./components/BacktestPanel'));
+const StrategyTrace = lazy(() => import('./components/StrategyTrace'));
+const SimAccount = lazy(() => import('./components/SimAccount'));
 
 const TABS = [
   { key: 'dashboard', label: '行情看板', icon: '📊' },
@@ -12,10 +15,19 @@ const TABS = [
   { key: 'account', label: '模拟账户', icon: '💰' },
 ];
 
+const TabLoading = () => (
+  <div style={{ textAlign: 'center', padding: 80, color: 'var(--text-muted)', fontSize: 15 }}>
+    <div style={{ fontSize: 32, marginBottom: 12 }}>⏳</div>
+    <div>加载模块中...</div>
+  </div>
+);
+
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [traceReport, setTraceReport] = useState(null);
   const [headerData, setHeaderData] = useState({ btc: null, eth: null, source: 'SIMULATED' });
+  // Track which tabs have been loaded at least once (keep-alive pattern)
+  const [loadedTabs, setLoadedTabs] = useState(new Set(['dashboard']));
 
   useEffect(() => {
     const iv = setInterval(async () => {
@@ -29,14 +41,22 @@ function App() {
           });
         }
       } catch (_) {}
-    }, 2000);
+    }, 3000);
     return () => clearInterval(iv);
+  }, []);
+
+  const switchTab = useCallback((key) => {
+    setLoadedTabs(prev => {
+      if (prev.has(key)) return prev;
+      return new Set([...prev, key]);
+    });
+    setActiveTab(key);
   }, []);
 
   const handleTrace = useCallback((report) => {
     setTraceReport(report);
-    setActiveTab('trace');
-  }, []);
+    switchTab('trace');
+  }, [switchTab]);
 
   const isLive = headerData.source === 'LIVE';
 
@@ -83,7 +103,7 @@ function App() {
         {TABS.map(t => (
           <button
             key={t.key}
-            onClick={() => setActiveTab(t.key)}
+            onClick={() => switchTab(t.key)}
             style={{
               ...styles.tab,
               ...(activeTab === t.key ? styles.tabActive : {}),
@@ -95,12 +115,22 @@ function App() {
         ))}
       </nav>
 
-      {/* ═══════ Content ═══════ */}
+      {/* ═══════ Content: lazy-loaded + keep-alive (hidden tabs stay mounted) ═══════ */}
       <main style={styles.main}>
-        {activeTab === 'dashboard' && <PriceChart />}
-        {activeTab === 'backtest' && <BacktestPanel onTrace={handleTrace} />}
-        {activeTab === 'trace' && <StrategyTrace report={traceReport} />}
-        {activeTab === 'account' && <SimAccount />}
+        <Suspense fallback={<TabLoading />}>
+          <div style={{ display: activeTab === 'dashboard' ? 'block' : 'none' }}>
+            {loadedTabs.has('dashboard') && <PriceChart active={activeTab === 'dashboard'} />}
+          </div>
+          <div style={{ display: activeTab === 'backtest' ? 'block' : 'none' }}>
+            {loadedTabs.has('backtest') && <BacktestPanel onTrace={handleTrace} active={activeTab === 'backtest'} />}
+          </div>
+          <div style={{ display: activeTab === 'trace' ? 'block' : 'none' }}>
+            {loadedTabs.has('trace') && <StrategyTrace report={traceReport} active={activeTab === 'trace'} />}
+          </div>
+          <div style={{ display: activeTab === 'account' ? 'block' : 'none' }}>
+            {loadedTabs.has('account') && <SimAccount active={activeTab === 'account'} />}
+          </div>
+        </Suspense>
       </main>
     </div>
   );

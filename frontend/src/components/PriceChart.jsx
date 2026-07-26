@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
-  CartesianGrid, Legend
+  CartesianGrid, Area, ComposedChart
 } from 'recharts';
 import { getPrices } from '../api';
 import axios from 'axios';
@@ -11,6 +11,22 @@ const http = axios.create({ baseURL: API, timeout: 30000 });
 
 const COLORS = { BTC_USDT: '#f7931a', ETH_USDT: '#627eea' };
 const LABELS = { BTC_USDT: 'BTC/USDT', ETH_USDT: 'ETH/USDT' };
+
+// Tooltip component with better formatting
+const ChartTooltip = ({ active, payload, label, symbol }) => {
+  if (!active || !payload?.length) return null;
+  const d = new Date(label);
+  const time = d.toLocaleTimeString();
+  const price = payload[0]?.value;
+  return (
+    <div style={{ background: '#0d1117', border: '1px solid rgba(255,255,255,.12)', borderRadius: 8, padding: '10px 14px', fontSize: 13 }}>
+      <div style={{ color: '#8896a4', fontSize: 11, marginBottom: 4 }}>{time}</div>
+      <div style={{ color: COLORS[symbol], fontWeight: 600, fontFamily: 'var(--font-mono)', fontSize: 15 }}>
+        ${price?.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 2 })}
+      </div>
+    </div>
+  );
+};
 
 export default function PriceChart() {
   const [data, setData] = useState([]);
@@ -125,44 +141,27 @@ export default function PriceChart() {
       <div style={styles.chartsGrid}>
         {['BTC_USDT', 'ETH_USDT'].map(sym => (
           <div key={sym} style={styles.chartBox}>
-            <h3 style={{ ...styles.chartTitle, color: COLORS[sym] }}>{LABELS[sym]}</h3>
-            <ResponsiveContainer width="100%" height={280}>
-              <LineChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#21262d" />
-                <XAxis
-                  dataKey="time"
-                  tickFormatter={formatTime}
-                  stroke="#484f58"
-                  fontSize={11}
-                />
-                <YAxis
-                  domain={['auto', 'auto']}
-                  stroke="#484f58"
-                  fontSize={11}
-                  tickFormatter={formatPrice}
-                  width={70}
-                />
-                <Tooltip
-                  contentStyle={{
-                    background: '#161b22',
-                    border: '1px solid #30363d',
-                    borderRadius: 6,
-                    fontSize: 13,
-                  }}
-                  labelFormatter={formatTime}
-                  formatter={(val) => ['$' + formatPrice(val), LABELS[sym]]}
-                />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey={sym}
-                  name={LABELS[sym]}
-                  stroke={COLORS[sym]}
-                  strokeWidth={1.5}
-                  dot={false}
-                  isAnimationActive={false}
-                />
-              </LineChart>
+            <div style={styles.chartHeader}>
+              <h3 style={{ ...styles.chartTitle, color: COLORS[sym] }}>{LABELS[sym]}</h3>
+              <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                {data.length > 0 ? `$${data[data.length-1]?.[sym]?.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})}` : ''}
+              </span>
+            </div>
+            <ResponsiveContainer width="100%" height={260}>
+              <ComposedChart data={data}>
+                <defs>
+                  <linearGradient id={`grad_${sym}`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor={COLORS[sym]} stopOpacity={0.2}/>
+                    <stop offset="100%" stopColor={COLORS[sym]} stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,.05)" />
+                <XAxis dataKey="time" tickFormatter={formatTime} stroke="#535c68" fontSize={10} tickLine={false} />
+                <YAxis domain={['auto','auto']} stroke="#535c68" fontSize={10} tickFormatter={v=>v>=1000?(v/1000).toFixed(1)+'k':v.toFixed(0)} width={55} tickLine={false} />
+                <Tooltip content={<ChartTooltip symbol={sym} />} />
+                <Area type="monotone" dataKey={sym} fill={`url(#grad_${sym})`} stroke="none" isAnimationActive={false} />
+                <Line type="monotone" dataKey={sym} stroke={COLORS[sym]} strokeWidth={2} dot={false} isAnimationActive={false} />
+              </ComposedChart>
             </ResponsiveContainer>
           </div>
         ))}
@@ -176,45 +175,35 @@ export default function PriceChart() {
 }
 
 const styles = {
-  cardRow: {
-    display: 'flex', gap: 14, marginBottom: 18,
-  },
+  cardRow: { display: 'flex', gap: 12, marginBottom: 16 },
   priceCard: {
-    flex: 1,
-    background: 'var(--bg-card)',
-    border: '1px solid var(--border)',
-    borderRadius: 'var(--radius)',
-    padding: '18px 22px',
-    boxShadow: 'var(--shadow-card)',
-    transition: 'border-color .2s, box-shadow .2s',
+    flex: 1, background: 'var(--bg-card)', border: '1px solid var(--border)',
+    borderRadius: 'var(--radius-lg)', padding: '20px 24px',
+    boxShadow: 'var(--shadow-sm)', transition: 'border-color var(--transition)',
   },
   cardLabel: {
-    fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
-    textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6,
+    fontSize: 10, fontWeight: 600, color: 'var(--text-secondary)',
+    textTransform: 'uppercase', letterSpacing: '.08em', marginBottom: 8,
   },
   cardPrice: {
-    fontSize: 30, fontWeight: 700, fontFamily: 'var(--font-mono)',
-    letterSpacing: '-0.02em',
+    fontSize: 32, fontWeight: 700, fontFamily: 'var(--font-mono)', letterSpacing: '-.02em',
+    lineHeight: 1.1,
   },
   cardChange: {
-    fontSize: 13, marginTop: 6, fontFamily: 'var(--font-mono)', fontWeight: 500,
+    fontSize: 13, marginTop: 8, fontFamily: 'var(--font-mono)', fontWeight: 500,
   },
-  chartsGrid: {
-    display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16,
-  },
+  chartsGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 },
   chartBox: {
-    background: 'var(--bg-card)',
-    border: '1px solid var(--border)',
-    borderRadius: 'var(--radius)',
-    padding: 18,
-    boxShadow: 'var(--shadow-card)',
+    background: 'var(--bg-card)', border: '1px solid var(--border)',
+    borderRadius: 'var(--radius-lg)', padding: 18, boxShadow: 'var(--shadow-sm)',
   },
-  chartTitle: {
-    fontSize: 13, fontWeight: 600, marginBottom: 12,
-    display: 'flex', alignItems: 'center', gap: 8,
+  chartHeader: {
+    display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
+    marginBottom: 8,
   },
+  chartTitle: { fontSize: 12, fontWeight: 600 },
   footnote: {
-    marginTop: 14, fontSize: 11, color: 'var(--text-muted)', textAlign: 'center',
-    letterSpacing: '0.02em',
+    marginTop: 16, fontSize: 11, color: 'var(--text-muted)', textAlign: 'center',
+    letterSpacing: '.02em',
   },
 };

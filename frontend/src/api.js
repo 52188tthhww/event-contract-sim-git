@@ -2,14 +2,10 @@ import axios from 'axios';
 
 const API = process.env.REACT_APP_API ?? '';
 
-// 共享 axios 实例 — keep-alive + 超时 + 重试
+// 共享 axios 实例 — keep-alive + 超时
 const http = axios.create({
   baseURL: API,
   timeout: 120000,
-  headers: {
-    'Connection': 'keep-alive',
-    'Cache-Control': 'no-cache',
-  },
 });
 
 // 静默模式 — 轮询接口报错不打印到控制台
