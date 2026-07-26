@@ -352,6 +352,20 @@ def _is_auto_locked(strat, al):
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await init_db()
+    # 预热：从 Gate.io 拉近 1 小时 K 线写入 DB，确保图表打开就有历史
+    try:
+        from gate_client import fetch_candles
+        from config import CANDLE_INTERVAL
+        db_init = await get_db()
+        for sym in ["BTC_USDT", "ETH_USDT"]:
+            df = await fetch_candles(symbol=sym, interval=CANDLE_INTERVAL, limit=120)
+            if df is not None and not df.empty:
+                for _, row in df.iterrows():
+                    ts = int(row["time"].timestamp()) if hasattr(row["time"], "timestamp") else int(row["time"] // 1e9)
+                    await save_tick(db_init, sym, float(row["close"]), ts)
+        app_state["events"].append({"level": "INFO", "msg": "📡 K线历史预热完成", "ts": datetime.now(timezone.utc).isoformat()})
+    except Exception as e:
+        app_state["events"].append({"level": "WARN", "msg": f"⚠ 预热失败: {e}", "ts": datetime.now(timezone.utc).isoformat()})
     # 恢复上次锁定的策略
     try:
         saved = await load_locked_strategies({})
