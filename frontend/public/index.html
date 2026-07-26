@@ -110,47 +110,120 @@
     .fade-in { animation: fadeInUp .3s ease; }
     .slide-in { animation: slideInRight .3s ease; }
 
-    /* ═══════════ Mobile (<768px) ═══════════ */
+    /* ═══════════ Mobile: Tablet (<768px) ═══════════ */
     @media (max-width: 768px) {
-      header { flex-direction: column !important; padding: 12px 0 !important; gap: 6px !important; }
-      header h1 { font-size: 16px !important; }
-      header span { font-size: 11px !important; }
+      /* Override any click-triggered scale */
+      button:active { transform: none; }
 
+      /* Header */
+      header {
+        flex-direction: column !important;
+        padding: 10px 0 !important;
+        gap: 8px !important;
+      }
+      header h1 { font-size: 15px !important; letter-spacing: 0 !important; }
+      header [style*="sourceBadge"] { align-self: flex-start; }
+      header [style*="headerLeft"], header [style*="headerRight"] {
+        width: 100% !important;
+      }
+
+      /* Tabs */
       nav {
         overflow-x: auto !important;
         -webkit-overflow-scrolling: touch;
         flex-wrap: nowrap !important;
         gap: 2px !important;
-        padding: 10px 0 !important;
+        padding: 8px 0 !important;
+        scrollbar-width: none;
       }
+      nav::-webkit-scrollbar { display: none; }
       nav button {
         flex-shrink: 0;
-        padding: 6px 10px !important;
-        font-size: 12px !important;
+        padding: 7px 12px !important;
+        font-size: 11px !important;
         white-space: nowrap;
+        min-height: 38px;
+        border-radius: 8px !important;
       }
 
-      #root > div { padding: 0 10px 20px !important; }
+      /* Container */
+      #root > div { padding: 0 8px 20px !important; }
 
+      /* Price cards */
       [style*="cardRow"] { flex-direction: column !important; gap: 8px !important; }
-      [style*="cardPrice"] { font-size: 22px !important; }
-      [style*="1fr 1fr"] { grid-template-columns: 1fr !important; }
-      [style*="repeat(6, 1fr)"] { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
-      [style*="repeat(4, 1fr)"] { grid-template-columns: 1fr !important; gap: 8px !important; }
+      [style*="cardPrice"] { font-size: 24px !important; }
 
+      /* Charts: 2-col → 1-col */
+      [style*="1fr 1fr"] { grid-template-columns: 1fr !important; }
+
+      /* Overview: 6-col → 3-col */
+      [style*="repeat(6, 1fr)"] { grid-template-columns: repeat(3, 1fr) !important; gap: 6px !important; }
+      [style*="repeat(6, 1fr)"] > div { padding: 10px 12px !important; }
+
+      /* Control panel: 4-col → 2-col on tablet, 1-col on phone */
+      [style*="repeat(4, 1fr)"] { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+
+      /* Toast */
+      [style*="toastLayer"] {
+        left: 8px !important; right: 8px !important; max-width: none !important;
+      }
       [style*="toastLayer"] > div {
-        padding: 10px 12px !important; font-size: 11px !important; max-width: 280px !important;
+        padding: 10px 12px !important; font-size: 12px !important;
       }
 
+      /* Charts */
       [style*="height: 320"] { height: 200px !important; }
       [style*="height: 280"] { height: 180px !important; }
-      [style*="fontSize: 18px"] { font-size: 15px !important; }
-      [style*="fontSize: 28px"] { font-size: 22px !important; }
+      [style*="fontSize: 18px"] { font-size: 14px !important; }
 
-      div[style*="overflowX"] { overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
-      table { font-size: 11px !important; }
-      th, td { padding: 4px 6px !important; }
-      input[type="number"] { font-size: 14px !important; }
+      /* Tables: full-width horizontal scroll */
+      div[style*="overflowX"], div[style*="overflow-x"] {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+      }
+      table { font-size: 10px !important; }
+      th, td { padding: 4px 5px !important; }
+
+      /* Form elements */
+      input, select, button { font-size: 14px !important; min-height: 36px; }
+      input[type="number"] { font-size: 14px !important; width: auto !important; max-width: 60px; }
+      input[type="checkbox"] { min-height: auto; }
+
+      /* Section spacing */
+      [style*="marginBottom: 20"] { margin-bottom: 14px !important; }
+      [style*="marginBottom: 16"] { margin-bottom: 10px !important; }
+      [style*="padding: 16px 20px"] { padding: 12px 14px !important; }
+      [style*="padding: 14px 18px"] { padding: 10px 12px !important; }
+
+      /* Sub-section cards */
+      [style*="section"] [style*="background"] {
+        margin-bottom: 8px !important;
+      }
+    }
+
+    /* ═══════════ Mobile: Phone (<480px) ═══════════ */
+    @media (max-width: 480px) {
+      header h1 { font-size: 14px !important; }
+      header [style*="tickerPrice"] { font-size: 12px !important; }
+      header [style*="tickerLabel"] { font-size: 9px !important; }
+
+      nav button { padding: 6px 8px !important; font-size: 10px !important; min-height: 32px; }
+      nav button span { font-size: 13px !important; }
+
+      [style*="repeat(6, 1fr)"] { grid-template-columns: repeat(2, 1fr) !important; gap: 4px !important; }
+      [style*="repeat(6, 1fr)"] > div { padding: 8px 10px !important; }
+      [style*="repeat(4, 1fr)"] { grid-template-columns: 1fr !important; }
+
+      [style*="cardPrice"] { font-size: 20px !important; }
+      [style*="height: 320"] { height: 150px !important; }
+      [style*="height: 280"] { height: 140px !important; }
+    }
+
+    /* ═══════════ Mobile: Small Phone (<400px) ═══════════ */
+    @media (max-width: 400px) {
+      header h1 { font-size: 13px !important; }
+      nav button { font-size: 0 !important; padding: 6px 10px !important; }
+      nav button span { font-size: 18px !important; }
     }
   </style>
 </head>
