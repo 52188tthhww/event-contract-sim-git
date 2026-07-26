@@ -46,8 +46,10 @@ def _http_get(url: str, timeout: int = 10) -> dict | list | None:
 
 
 async def _http_get_async(url: str, timeout: int = 10):
-    """异步 HTTP GET"""
-    return await asyncio.to_thread(_http_get, url, timeout)
+    try:
+        return await asyncio.wait_for(asyncio.to_thread(_http_get, url, timeout), timeout + 5)
+    except (asyncio.TimeoutError, Exception):
+        raise ConnectionError(f"Gate.io request timed out after {timeout+5}s") from None
 
 
 def _switch_to_simulated(reason: str):
