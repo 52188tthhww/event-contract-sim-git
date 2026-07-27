@@ -1063,11 +1063,11 @@ function PositionSizeInput({ value, onChange }) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(String(value));
 
-  const presets = [50, 100, 200, 500, 1000];
+  const presets = [3, 10, 50, 100, 500];
 
   const apply = (val) => {
     const n = parseFloat(val);
-    if (n >= 1 && n <= 100000) {
+    if (n >= 3 && n <= 100000) {
       onChange(n);
       setDraft(String(n));
     }
@@ -1085,7 +1085,7 @@ function PositionSizeInput({ value, onChange }) {
               onChange={e => setDraft(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter') apply(draft); if (e.key === 'Escape') setEditing(false); }}
               style={styles.sizeInput}
-              min={1}
+              min={3}
               max={100000}
               autoFocus
             />

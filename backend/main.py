@@ -464,7 +464,7 @@ def root():
 # ── 行情 ──
 
 @app.get("/prices")
-def get_prices():
+async def get_prices():
     return {
         "prices": app_state["prices"],
         "status": app_state["status"],
@@ -895,7 +895,7 @@ def get_settings():
 @app.post("/settings")
 def update_settings(req: SettingsReq):
     if req.position_size is not None:
-        if req.position_size < 1 or req.position_size > 100000:
+        if req.position_size < 3 or req.position_size > 100000:
             raise HTTPException(400, "仓位金额需在 1 ~ 100000 USDT 之间")
         old = app_state["position_size"]
         app_state["position_size"] = req.position_size
