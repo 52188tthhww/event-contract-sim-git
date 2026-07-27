@@ -12,4 +12,4 @@ MANUAL_BACKTEST_MAX_HOURS = 4
 OBS_SYMBOL = "BTC_USDT"
 OBS_15S_MINUTE_WINDOW = 60
 OBS_1M_LIMIT = 120
-OBS_POLL_INTERVAL = 2
+OBS_POLL_INTERVAL = 10  # was 2s — reduced to 10s to lower CPU; observation pool doesn't need per-tick precision

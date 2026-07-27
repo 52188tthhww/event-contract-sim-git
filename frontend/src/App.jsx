@@ -34,10 +34,13 @@ function App() {
       try {
         const res = await getPrices();
         if (res) {
-          setHeaderData({
-            btc: res.prices?.BTC_USDT,
-            eth: res.prices?.ETH_USDT,
-            source: res.data_source?.source || 'SIMULATED',
+          setHeaderData(prev => {
+            const btc = res.prices?.BTC_USDT;
+            const eth = res.prices?.ETH_USDT;
+            const source = res.data_source?.source || 'SIMULATED';
+            // Skip update if prices haven't changed (reduce re-renders)
+            if (btc === prev.btc && eth === prev.eth && source === prev.source) return prev;
+            return { btc, eth, source };
           });
         }
       } catch (_) {}

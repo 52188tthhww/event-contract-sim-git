@@ -1,10 +1,10 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, memo } from 'react';
 import {
   ComposedChart, Line, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   CartesianGrid, ReferenceLine, Area, Legend
 } from 'recharts';
 
-export default function StrategyTrace({ report }) {
+const StrategyTrace = memo(function StrategyTrace({ report }) {
   if (!report) {
     return (
       <div style={styles.empty}>
@@ -316,7 +316,9 @@ export default function StrategyTrace({ report }) {
       </div>
     </div>
   );
-}
+});
+
+export default StrategyTrace;
 
 const styles = {
   empty: {

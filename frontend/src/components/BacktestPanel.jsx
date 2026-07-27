@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, memo } from 'react';
 import { runBacktest, lockStrategy, unlockStrategy, getStrategies, getReports, getAccount } from '../api';
 
 const DURATIONS = [3, 5, 10];
 const COLORS = { BTC_USDT: 'var(--text)', ETH_USDT: 'var(--text-secondary)' };
 
-export default function BacktestPanel({ onTrace }) {
+const BacktestPanel = memo(function BacktestPanel({ onTrace }) {
   const [symbol, setSymbol] = useState('BTC_USDT');
   const [hours, setHours] = useState(4);
   const [reports, setReports] = useState([]);
@@ -321,7 +321,9 @@ export default function BacktestPanel({ onTrace }) {
       )}
     </div>
   );
-}
+});
+
+export default BacktestPanel;
 
 const styles = {
   controlBar: {

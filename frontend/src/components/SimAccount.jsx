@@ -55,11 +55,14 @@ function playBeep(type = 'open') {
   } catch (_) { /* 浏览器不支持 */ }
 }
 
-export default function SimAccount() {
+export default memo(function SimAccount() {
   const [acc, setAcc] = useState(null);
   const [message, setMessage] = useState('');
-  // 价格历史
+  // 价格历史 — buffered: only flush to state every N polls to reduce chart re-renders
   const [priceData, setPriceData] = useState([]);
+  const priceBufRef = useRef([]);
+  const pricePollRef = useRef(0);
+  const PRICE_FLUSH = 5; // flush every 5 polls (~15s)
   // 所有持仓标记（OPEN + 最近 CLOSED）
   const [allPositions, setAllPositions] = useState([]);
   // 历史交易记录
@@ -103,13 +106,18 @@ export default function SimAccount() {
 
       const prices = data.prices || {};
       const now = Date.now();
-      setPriceData(prev => {
-        const last = prev.length > 0 ? prev[prev.length - 1] : {};
-        const btc = prices.BTC_USDT || last.BTC_USDT;
-        const eth = prices.ETH_USDT || last.ETH_USDT;
-        if (!btc && !eth) return prev;
-        return [...prev, { time: now, BTC_USDT: btc, ETH_USDT: eth }].slice(-300);
-      });
+      // Buffer price data: only flush to React state every PRICE_FLUSH polls
+      const last = priceBufRef.current.length > 0 ? priceBufRef.current[priceBufRef.current.length - 1] : {};
+      const btc = prices.BTC_USDT || last.BTC_USDT;
+      const eth = prices.ETH_USDT || last.ETH_USDT;
+      if (btc || eth) {
+        priceBufRef.current = [...priceBufRef.current, { time: now, BTC_USDT: btc, ETH_USDT: eth }].slice(-300);
+      }
+      pricePollRef.current++;
+      if (pricePollRef.current >= PRICE_FLUSH) {
+        pricePollRef.current = 0;
+        setPriceData(priceBufRef.current);
+      }
 
       setAcc(data);
       setAllPositions(data.all_positions || []);
@@ -227,27 +235,34 @@ export default function SimAccount() {
     return <div style={styles.empty}>⏳ 等待后端连接...</div>;
   }
 
-  // ── 图表数据准备 ──
-  const buildEntryMarkers = (symbol) => {
-    return allPositions
-      .filter(p => p.symbol === symbol)
-      .map(p => ({
-        time: new Date(p.entry_ts).getTime(),
-        price: p.entry_price,
-        direction: p.direction,
-        duration: p.duration,
-        status: p.status,
-        strategy: p.strategy_name || p.strategy_id,
-        id: p.id,
-      }));
-  };
+  // ── 图表数据准备（memoized）──
+  const btcMarkers = useMemo(() => allPositions
+    .filter(p => p.symbol === 'BTC_USDT')
+    .map(p => ({
+      time: new Date(p.entry_ts).getTime(),
+      price: p.entry_price,
+      direction: p.direction,
+      duration: p.duration,
+      status: p.status,
+      strategy: p.strategy_name || p.strategy_id,
+      id: p.id,
+    })), [allPositions]);
 
-  const btcMarkers = buildEntryMarkers('BTC_USDT');
-  const ethMarkers = buildEntryMarkers('ETH_USDT');
+  const ethMarkers = useMemo(() => allPositions
+    .filter(p => p.symbol === 'ETH_USDT')
+    .map(p => ({
+      time: new Date(p.entry_ts).getTime(),
+      price: p.entry_price,
+      direction: p.direction,
+      duration: p.duration,
+      status: p.status,
+      strategy: p.strategy_name || p.strategy_id,
+      id: p.id,
+    })), [allPositions]);
 
   // 持仓 Y 轴参考线（当前持仓的入场价）
-  const openBTCEntries = allPositions.filter(p => p.symbol === 'BTC_USDT' && p.status === 'OPEN');
-  const openETHEntries = allPositions.filter(p => p.symbol === 'ETH_USDT' && p.status === 'OPEN');
+  const openBTCEntries = useMemo(() => allPositions.filter(p => p.symbol === 'BTC_USDT' && p.status === 'OPEN'), [allPositions]);
+  const openETHEntries = useMemo(() => allPositions.filter(p => p.symbol === 'ETH_USDT' && p.status === 'OPEN'), [allPositions]);
 
   const statusColor = acc.status === 'RUNNING' ? 'var(--text)' : 'var(--text-secondary)';
   const formatPrice = (v) => v?.toFixed?.(2) || '—';
@@ -953,7 +968,7 @@ export default function SimAccount() {
 
     </div>
   );
-}
+});
 
 // ═══ Memo 子组件（非价格数据不随 2s 刷新重渲染）═══
 

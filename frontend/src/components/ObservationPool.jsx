@@ -3,13 +3,13 @@
  * 展示全部策略，每策略×时长独立锁定按钮
  * 默认只显示有交易数据的策略，减少渲染压力
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback, memo } from 'react';
 import { getPoolStats, resetPool, lockStrategy, unlockStrategy } from '../ext_api';
 import axios from 'axios';
 
 const API = process.env.REACT_APP_API ?? '';
 
-export default function ObservationPool({ onLockChange }) {
+const ObservationPool = memo(function ObservationPool({ onLockChange }) {
   const [pool, setPool] = useState({ stats: {}, open_count: 0, closed_count: 0 });
   const [allStrategies, setAllStrategies] = useState([]);
   const [message, setMessage] = useState('');
@@ -37,7 +37,25 @@ export default function ObservationPool({ onLockChange }) {
     }
   };
 
-  const handleLock = async (sid, name, dur, symbol) => {
+  const stats = pool.stats || {};
+
+  const merged = useMemo(() => {
+    return allStrategies.map(s => ({
+      id: s.id,
+      name: s.name,
+      d3: (stats[s.id] && stats[s.id]['3']) || { wins: 0, losses: 0 },
+      d5: (stats[s.id] && stats[s.id]['5']) || { wins: 0, losses: 0 },
+      d10: (stats[s.id] && stats[s.id]['10']) || { wins: 0, losses: 0 },
+      total: ((stats[s.id]?.['3']?.wins||0)+(stats[s.id]?.['3']?.losses||0)+
+              (stats[s.id]?.['5']?.wins||0)+(stats[s.id]?.['5']?.losses||0)+
+              (stats[s.id]?.['10']?.wins||0)+(stats[s.id]?.['10']?.losses||0)),
+    })).sort((a, b) => b.total - a.total);
+  }, [allStrategies, stats]);
+
+  const activeCount = useMemo(() => merged.filter(s => s.total > 0).length, [merged]);
+  const displayed = useMemo(() => showAll ? merged : merged.filter(s => s.total > 0), [showAll, merged]);
+
+  const handleLock = useCallback(async (sid, name, dur, symbol) => {
     try {
       await lockStrategy({ strategy_id: sid, duration: dur, symbol });
       setMessage(`${name} ${dur}min 已锁定`);
@@ -45,26 +63,9 @@ export default function ObservationPool({ onLockChange }) {
     } catch (e) {
       setMessage(`操作失败: ${e.response?.data?.detail || e.message}`);
     }
-  };
+  }, [onLockChange]);
 
-  const stats = pool.stats || {};
-
-  const merged = allStrategies.map(s => ({
-    id: s.id,
-    name: s.name,
-    d3: (stats[s.id] && stats[s.id]['3']) || { wins: 0, losses: 0 },
-    d5: (stats[s.id] && stats[s.id]['5']) || { wins: 0, losses: 0 },
-    d10: (stats[s.id] && stats[s.id]['10']) || { wins: 0, losses: 0 },
-    total: ((stats[s.id]?.['3']?.wins||0)+(stats[s.id]?.['3']?.losses||0)+
-            (stats[s.id]?.['5']?.wins||0)+(stats[s.id]?.['5']?.losses||0)+
-            (stats[s.id]?.['10']?.wins||0)+(stats[s.id]?.['10']?.losses||0)),
-  }));
-
-  merged.sort((a, b) => b.total - a.total);
-  const activeCount = merged.filter(s => s.total > 0).length;
-  const displayed = showAll ? merged : merged.filter(s => s.total > 0);
-
-  const renderCell = (d, dur, sid, name) => {
+  const renderCell = useCallback((d, dur, sid, name) => {
     const total = d.wins + d.losses;
     if (total === 0) {
       return (
@@ -91,7 +92,7 @@ export default function ObservationPool({ onLockChange }) {
         </button>
       </div>
     );
-  };
+  }, [handleLock]);
 
   return (
     <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: 16, marginTop: 12 }}>
@@ -144,7 +145,9 @@ export default function ObservationPool({ onLockChange }) {
       </div>
     </div>
   );
-}
+});
 
 const th = { padding: '8px 8px', fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', borderBottom: '1px solid #21262d', textAlign: 'left' };
 const td = { padding: '6px 8px', fontSize: 12, borderBottom: '1px solid #0d1117' };
+
+export default ObservationPool;
