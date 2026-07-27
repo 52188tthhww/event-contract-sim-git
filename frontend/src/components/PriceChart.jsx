@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useMemo, useCallback, memo } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
   CartesianGrid, Area, ComposedChart
@@ -13,7 +13,7 @@ const COLORS = { BTC_USDT: 'var(--btc)', ETH_USDT: 'var(--eth)' };
 const LABELS = { BTC_USDT: 'BTC/USDT', ETH_USDT: 'ETH/USDT' };
 
 // Tooltip component with better formatting
-const ChartTooltip = memo(({ active, payload, label, symbol }) => {
+const ChartTooltip = ({ active, payload, label, symbol }) => {
   if (!active || !payload?.length) return null;
   const d = new Date(label);
   const time = d.toLocaleTimeString();
@@ -26,39 +26,12 @@ const ChartTooltip = memo(({ active, payload, label, symbol }) => {
       </div>
     </div>
   );
-});
+};
 
-// ── Memoized chart sub-component: isolates Recharts re-render ──
-const MemoChart = memo(function MemoChart({ data, sym, formatTime }) {
-  const yTickFormatter = useCallback(v => v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v.toFixed(0), []);
-  return (
-    <ResponsiveContainer width="100%" height={260}>
-      <ComposedChart data={data}>
-        <defs>
-          <linearGradient id={`grad_${sym}`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={COLORS[sym]} stopOpacity={0.2}/>
-            <stop offset="100%" stopColor={COLORS[sym]} stopOpacity={0}/>
-          </linearGradient>
-        </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,.05)" />
-        <XAxis dataKey="time" tickFormatter={formatTime} stroke="#535c68" fontSize={10} tickLine={false} />
-        <YAxis domain={['auto','auto']} stroke="#535c68" fontSize={10} tickFormatter={yTickFormatter} width={55} tickLine={false} />
-        <Tooltip content={<ChartTooltip symbol={sym} />} />
-        <Area type="monotone" dataKey={sym} fill={`url(#grad_${sym})`} stroke="none" isAnimationActive={false} />
-        <Line type="monotone" dataKey={sym} stroke={COLORS[sym]} strokeWidth={2} dot={false} isAnimationActive={false} />
-      </ComposedChart>
-    </ResponsiveContainer>
-  );
-});
-
-const PriceChart = memo(function PriceChart() {
-  const [chartData, setChartData] = useState([]);
+export default function PriceChart() {
+  const [data, setData] = useState([]);
   const [metrics, setMetrics] = useState({});
   const timerRef = useRef(null);
-  // Buffer: accumulate poll results in a ref; only flush to state every N polls
-  const bufferRef = useRef([]);
-  const pollCountRef = useRef(0);
-  const FLUSH_INTERVAL = 5; // flush chart state every 5 polls (15s instead of 3s)
 
   // 后台加载历史数据（不阻塞实时轮询）
   useEffect(() => {
@@ -84,12 +57,10 @@ const PriceChart = memo(function PriceChart() {
           } else { merged.push({ ...et, BTC_USDT: bt.BTC_USDT }); ei++; }
         }
         if (!cancelled) {
-          setChartData(prev => {
+          setData(prev => {
             const prevTimes = new Set(prev.map(p => p.time));
             const newData = merged.filter(p => !prevTimes.has(p.time));
-            const next = [...prev, ...newData].sort((a, b) => a.time - b.time).slice(-300);
-            bufferRef.current = next;
-            return next;
+            return [...prev, ...newData].sort((a, b) => a.time - b.time).slice(-300);
           });
           const lastBtc = btcHistory[btcHistory.length - 1];
           const lastEth = ethHistory[ethHistory.length - 1];
@@ -105,33 +76,25 @@ const PriceChart = memo(function PriceChart() {
     return () => { cancelled = true; };
   }, []);
 
-  // 实时轮询（立刻开始）— buffered: only update React state every FLUSH_INTERVAL polls
+  // 实时轮询（立刻开始）
   useEffect(() => {
     const fetchPrices = async () => {
       try {
         const res = await getPrices();
         const prices = res.prices || {};
         const now = Date.now();
-        // Always update the buffer ref (no re-render)
-        const prevBuf = bufferRef.current;
-        const nextBuf = [...prevBuf, { time: now, BTC_USDT: prices.BTC_USDT, ETH_USDT: prices.ETH_USDT }].slice(-300);
-        bufferRef.current = nextBuf;
-        pollCountRef.current++;
-        // Flush to state every FLUSH_INTERVAL polls
-        if (pollCountRef.current >= FLUSH_INTERVAL) {
-          pollCountRef.current = 0;
-          setChartData(nextBuf);
-        }
-        // Metrics update is cheap: only fires when values change
+        setData(prev => {
+          const next = [...prev, { time: now, BTC_USDT: prices.BTC_USDT, ETH_USDT: prices.ETH_USDT }];
+          return next.slice(-300);
+        });
         setMetrics(prev => {
           const btc = prices.BTC_USDT;
           const eth = prices.ETH_USDT;
           if (!btc && !eth) return prev;
-          const newBtc = btc ? { price: btc, change: prev.BTC_USDT ? ((btc - prev.BTC_USDT.price) / prev.BTC_USDT.price * 100).toFixed(3) : '0.000' } : prev.BTC_USDT;
-          const newEth = eth ? { price: eth, change: prev.ETH_USDT ? ((eth - prev.ETH_USDT.price) / prev.ETH_USDT.price * 100).toFixed(3) : '0.000' } : prev.ETH_USDT;
-          // Skip update if price hasn't changed
-          if (newBtc?.price === prev.BTC_USDT?.price && newEth?.price === prev.ETH_USDT?.price) return prev;
-          return { BTC_USDT: newBtc, ETH_USDT: newEth };
+          return {
+            BTC_USDT: btc ? { price: btc, change: prev.BTC_USDT ? ((btc - prev.BTC_USDT.price) / prev.BTC_USDT.price * 100).toFixed(3) : '0.000' } : prev.BTC_USDT,
+            ETH_USDT: eth ? { price: eth, change: prev.ETH_USDT ? ((eth - prev.ETH_USDT.price) / prev.ETH_USDT.price * 100).toFixed(3) : '0.000' } : prev.ETH_USDT,
+          };
         });
       } catch (_) {}
     };
@@ -140,22 +103,15 @@ const PriceChart = memo(function PriceChart() {
     return () => clearInterval(timerRef.current);
   }, []);
 
-  const formatTime = useCallback((ts) => {
+  const formatTime = (ts) => {
     const d = new Date(ts);
     return d.toLocaleTimeString();
-  }, []);
+  };
 
-  const formatPrice = useCallback((val) => {
+  const formatPrice = (val) => {
     if (val == null) return '—';
     return val >= 1000 ? val.toLocaleString(undefined, { maximumFractionDigits: 2 }) : val.toFixed(2);
-  }, []);
-
-  // Memoized last price for chart header
-  const lastPrice = useMemo(() => {
-    if (chartData.length === 0) return { BTC_USDT: null, ETH_USDT: null };
-    const last = chartData[chartData.length - 1];
-    return { BTC_USDT: last.BTC_USDT, ETH_USDT: last.ETH_USDT };
-  }, [chartData]);
+  };
 
   return (
     <div>
@@ -188,10 +144,25 @@ const PriceChart = memo(function PriceChart() {
             <div style={styles.chartHeader}>
               <h3 style={{ ...styles.chartTitle, color: COLORS[sym] }}>{LABELS[sym]}</h3>
               <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-                {lastPrice[sym] != null ? `$${lastPrice[sym]?.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})}` : ''}
+                {data.length > 0 ? `$${data[data.length-1]?.[sym]?.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})}` : ''}
               </span>
             </div>
-            <MemoChart data={chartData} sym={sym} formatTime={formatTime} />
+            <ResponsiveContainer width="100%" height={260}>
+              <ComposedChart data={data}>
+                <defs>
+                  <linearGradient id={`grad_${sym}`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor={COLORS[sym]} stopOpacity={0.2}/>
+                    <stop offset="100%" stopColor={COLORS[sym]} stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,.05)" />
+                <XAxis dataKey="time" tickFormatter={formatTime} stroke="#535c68" fontSize={10} tickLine={false} />
+                <YAxis domain={['auto','auto']} stroke="#535c68" fontSize={10} tickFormatter={v=>v>=1000?(v/1000).toFixed(1)+'k':v.toFixed(0)} width={55} tickLine={false} />
+                <Tooltip content={<ChartTooltip symbol={sym} />} />
+                <Area type="monotone" dataKey={sym} fill={`url(#grad_${sym})`} stroke="none" isAnimationActive={false} />
+                <Line type="monotone" dataKey={sym} stroke={COLORS[sym]} strokeWidth={2} dot={false} isAnimationActive={false} />
+              </ComposedChart>
+            </ResponsiveContainer>
           </div>
         ))}
       </div>
@@ -201,9 +172,7 @@ const PriceChart = memo(function PriceChart() {
       </div>
     </div>
   );
-});
-
-export default PriceChart;
+}
 
 const styles = {
   cardRow: { display: 'flex', gap: 10, marginBottom: 14 },
