@@ -39,7 +39,7 @@ const BacktestPanel = memo(function BacktestPanel({ onTrace }) {
           setLockedMap(map);
         }
       }).catch(() => {});
-    }, 3000);
+    }, 5000);
     return () => clearInterval(iv);
   }, []);
 

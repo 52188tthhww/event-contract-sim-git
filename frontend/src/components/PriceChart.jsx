@@ -60,7 +60,7 @@ export default function PriceChart() {
           setData(prev => {
             const prevTimes = new Set(prev.map(p => p.time));
             const newData = merged.filter(p => !prevTimes.has(p.time));
-            return [...prev, ...newData].sort((a, b) => a.time - b.time).slice(-300);
+            return [...prev, ...newData].sort((a, b) => a.time - b.time).slice(-200);
           });
           const lastBtc = btcHistory[btcHistory.length - 1];
           const lastEth = ethHistory[ethHistory.length - 1];
@@ -85,7 +85,7 @@ export default function PriceChart() {
         const now = Date.now();
         setData(prev => {
           const next = [...prev, { time: now, BTC_USDT: prices.BTC_USDT, ETH_USDT: prices.ETH_USDT }];
-          return next.slice(-300);
+          return next.slice(-200);
         });
         setMetrics(prev => {
           const btc = prices.BTC_USDT;
@@ -99,7 +99,7 @@ export default function PriceChart() {
       } catch (_) {}
     };
     fetchPrices();
-    timerRef.current = setInterval(fetchPrices, 3000);
+    timerRef.current = setInterval(fetchPrices, 5000);
     return () => clearInterval(timerRef.current);
   }, []);
 
@@ -168,7 +168,7 @@ export default function PriceChart() {
       </div>
 
       <div style={styles.footnote}>
-        实时数据来自 Gate.io · 2 秒刷新
+        实时数据来自 Gate.io · 5 秒刷新
       </div>
     </div>
   );
