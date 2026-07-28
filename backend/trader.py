@@ -77,20 +77,26 @@ async def _close_after_duration(pos: dict):
     """等待合约到期后自动平仓"""
     await asyncio.sleep(pos["duration"] * 60)
 
-    # 用标记价作为平仓价（和实盘结算价更接近）
+    # 用标记价作为平仓价
     mark_prices = app_state.get("mark_prices", {})
     current_price = mark_prices.get(pos["symbol"], app_state["prices"].get(pos["symbol"], pos["entry_price"]))
     direction = 1 if pos["direction"] == "UP" else -1
     pos_size = pos.get("position_size", app_state.get("position_size", 100.0))
-    # PnL = 涨跌幅% × 仓位金额 × 方向
-    price_chg_pct = (current_price - pos["entry_price"]) / pos["entry_price"]
-    pnl = price_chg_pct * pos_size * direction  # direction: UP=1, DOWN=-1
+
+    # 事件合约二元结算：方向对 → +80%，方向错 → -100%
+    is_win = (current_price - pos["entry_price"]) * direction > 0
+    if is_win:
+        pnl = pos_size * 0.8
+        pnl_pct = 80.0
+    else:
+        pnl = -pos_size
+        pnl_pct = -100.0
 
     pos["exit_price"] = current_price
     pos["exit_ts"] = _now_iso()
     pos["status"] = "CLOSED"
     pos["pnl"] = round(pnl, 4)
-    pos["pnl_pct"] = round(price_chg_pct * 100 * direction, 4)  # 带方向的涨跌幅
+    pos["pnl_pct"] = round(pnl_pct, 4)
 
     app_state["balance"] += pnl
     result_emoji = "WIN" if pnl > 0 else "LOSE"
