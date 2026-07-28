@@ -108,7 +108,7 @@ export default function SimAccount() {
         const btc = prices.BTC_USDT || last.BTC_USDT;
         const eth = prices.ETH_USDT || last.ETH_USDT;
         if (!btc && !eth) return prev;
-        return [...prev, { time: now, BTC_USDT: btc, ETH_USDT: eth }].slice(-200);
+        return [...prev, { time: now, BTC_USDT: btc, ETH_USDT: eth }].slice(-300);
       });
 
       setAcc(data);
@@ -181,7 +181,7 @@ export default function SimAccount() {
         if (!cancelled) setPriceData(prev => {
           const prevTimes = new Set(prev.map(p => p.time));
           const newData = merged.filter(p => !prevTimes.has(p.time));
-          return [...prev, ...newData].sort((a, b) => a.time - b.time).slice(-200);
+          return [...prev, ...newData].sort((a, b) => a.time - b.time).slice(-300);
         });
       } catch (_) {}
     })();
@@ -191,7 +191,7 @@ export default function SimAccount() {
   // 实时轮询（立刻开始，不等待历史）
   useEffect(() => {
     refresh();
-    const iv = setInterval(refresh, 5000);
+    const iv = setInterval(refresh, 3000);
     return () => clearInterval(iv);
   }, [refresh]);
 
@@ -227,34 +227,27 @@ export default function SimAccount() {
     return <div style={styles.empty}>⏳ 等待后端连接...</div>;
   }
 
-  // ── 图表数据准备（useMemo 避免每次渲染重建）──
-  const btcMarkers = useMemo(() => allPositions
-    .filter(p => p.symbol === 'BTC_USDT')
-    .map(p => ({
-      time: new Date(p.entry_ts).getTime(),
-      price: p.entry_price,
-      direction: p.direction,
-      duration: p.duration,
-      status: p.status,
-      strategy: p.strategy_name || p.strategy_id,
-      id: p.id,
-    })), [allPositions]);
+  // ── 图表数据准备 ──
+  const buildEntryMarkers = (symbol) => {
+    return allPositions
+      .filter(p => p.symbol === symbol)
+      .map(p => ({
+        time: new Date(p.entry_ts).getTime(),
+        price: p.entry_price,
+        direction: p.direction,
+        duration: p.duration,
+        status: p.status,
+        strategy: p.strategy_name || p.strategy_id,
+        id: p.id,
+      }));
+  };
 
-  const ethMarkers = useMemo(() => allPositions
-    .filter(p => p.symbol === 'ETH_USDT')
-    .map(p => ({
-      time: new Date(p.entry_ts).getTime(),
-      price: p.entry_price,
-      direction: p.direction,
-      duration: p.duration,
-      status: p.status,
-      strategy: p.strategy_name || p.strategy_id,
-      id: p.id,
-    })), [allPositions]);
+  const btcMarkers = buildEntryMarkers('BTC_USDT');
+  const ethMarkers = buildEntryMarkers('ETH_USDT');
 
   // 持仓 Y 轴参考线（当前持仓的入场价）
-  const openBTCEntries = useMemo(() => allPositions.filter(p => p.symbol === 'BTC_USDT' && p.status === 'OPEN'), [allPositions]);
-  const openETHEntries = useMemo(() => allPositions.filter(p => p.symbol === 'ETH_USDT' && p.status === 'OPEN'), [allPositions]);
+  const openBTCEntries = allPositions.filter(p => p.symbol === 'BTC_USDT' && p.status === 'OPEN');
+  const openETHEntries = allPositions.filter(p => p.symbol === 'ETH_USDT' && p.status === 'OPEN');
 
   const statusColor = acc.status === 'RUNNING' ? 'var(--text)' : 'var(--text-secondary)';
   const formatPrice = (v) => v?.toFixed?.(2) || '—';
@@ -387,8 +380,101 @@ export default function SimAccount() {
 
       {/* ═══════ 行情图 + 开仓标记 ═══════ */}
       <div style={styles.chartsGrid}>
-        <PriceChartSection priceData={priceData} allPositions={allPositions} sym="BTC_USDT" />
-        <PriceChartSection priceData={priceData} allPositions={allPositions} sym="ETH_USDT" />
+        {['BTC_USDT', 'ETH_USDT'].map(sym => {
+          const markers = sym === 'BTC_USDT' ? btcMarkers : ethMarkers;
+          const opens = sym === 'BTC_USDT' ? openBTCEntries : openETHEntries;
+
+          return (
+            <div key={sym} style={styles.chartBox}>
+              <div style={styles.chartHeader}>
+                <h3 style={{ ...styles.chartTitle, color: COLORS[sym] }}>{LABELS[sym]}</h3>
+                <span style={styles.chartBadge}>
+                  {markers.length} 笔标记
+                </span>
+              </div>
+              <ResponsiveContainer width="100%" height={320}>
+                <ComposedChart data={priceData} margin={{ top: 10, right: 10, bottom: 5, left: 10 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#21262d" />
+                  <XAxis
+                    dataKey="time"
+                    tickFormatter={formatTime}
+                    stroke="#484f58"
+                    fontSize={10}
+                  />
+                  <YAxis
+                    domain={(() => {
+                      const vals = priceData.map(d => d[sym]).filter(v => v != null);
+                      if (vals.length < 2) return ['auto', 'auto'];
+                      const min = Math.min(...vals);
+                      const max = Math.max(...vals);
+                      const pad = (max - min) * 0.15 || max * 0.002;
+                      return [Math.floor(min - pad), Math.ceil(max + pad)];
+                    })()}
+                    stroke="#484f58"
+                    fontSize={10}
+                    tickFormatter={v => v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v.toFixed(0)}
+                    width={55}
+                    allowDataOverflow
+                  />
+                  <Tooltip
+                    contentStyle={tooltipStyle}
+                    labelFormatter={formatTime}
+                    formatter={(val, name) => {
+                      if (name === LABELS[sym]) return ['$' + formatPrice(val), LABELS[sym]];
+                      return [val, name];
+                    }}
+                  />
+                  {/* 价格线 + 开仓标记点 */}
+                  <Line
+                    type="monotone"
+                    dataKey={sym}
+                    name={LABELS[sym]}
+                    stroke={COLORS[sym]}
+                    strokeWidth={2}
+                    dot={false}
+                    isAnimationActive={false}
+                  />
+                  {/* 开仓标记 — 用 ReferenceLine 标注入场价 */}
+                  {markers.slice(-10).map(m => (
+                    <ReferenceLine
+                      key={m.id}
+                      y={m.price}
+                      stroke={m.direction === 'UP' ? 'var(--text)' : 'var(--down)'}
+                      strokeDasharray={m.status === 'OPEN' ? '2 2' : '6 3'}
+                      strokeWidth={m.status === 'OPEN' ? 1.5 : 0.8}
+                      opacity={m.status === 'OPEN' ? 1 : 0.5}
+                      label={{
+                        value: `${m.direction === 'UP' ? '▲' : '▼'} ${m.duration}m`,
+                        fill: m.direction === 'UP' ? 'var(--text)' : 'var(--down)',
+                        fontSize: 9,
+                        position: 'right',
+                      }}
+                    />
+                  ))}
+                </ComposedChart>
+              </ResponsiveContainer>
+              {/* 最近标记列表 */}
+              {markers.length > 0 && (
+                <div style={styles.markerList}>
+                  {markers.slice(-5).reverse().map(m => (
+                    <span key={m.id} style={{
+                      ...styles.markerTag,
+                      color: m.direction === 'UP' ? 'var(--text)' : 'var(--down)',
+                      borderColor: m.status === 'OPEN' ? (m.direction === 'UP' ? 'var(--text)' : 'var(--down)') : 'var(--border-light)',
+                      background: m.status === 'OPEN'
+                        ? (m.direction === 'UP' ? 'var(--accent-dim)' : 'rgba(255,255,255,.02)')
+                        : 'transparent',
+                    }}>
+                      {m.direction === 'UP' ? '▲' : '▼'} {m.duration}m
+                      @{m.price?.toFixed(1)}
+                      {m.status === 'OPEN' && ' ●'}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* ═══════ 锁定策略 + 控制 + 设置 ═══════ */}
@@ -764,7 +850,81 @@ export default function SimAccount() {
             开仓点位 · 时间 · 输赢
           </span>
         </h3>
-        <HistoryTable history={history} />
+        {history.length === 0 ? (
+          <div style={styles.noData}>暂无历史记录</div>
+        ) : (
+          <div style={{ ...styles.tableWrap, maxHeight: 360, overflowY: 'auto' }}>
+            <table style={styles.table}>
+              <thead>
+                <tr style={{ ...styles.tableHeaderRow, position: 'sticky', top: 0, zIndex: 2 }}>
+                  <th style={styles.th}>品种</th>
+                  <th style={styles.th}>时长</th>
+                  <th style={styles.th}>方向</th>
+                  <th style={styles.th}>策略</th>
+                  <th style={styles.th}>入场价</th>
+                  <th style={styles.th}>入场时间</th>
+                  <th style={styles.th}>出场价</th>
+                  <th style={styles.th}>出场时间</th>
+                  <th style={styles.th}>盈亏</th>
+                  <th style={styles.th}>结果</th>
+                </tr>
+              </thead>
+              <tbody>
+                {history.map((t, i) => (
+                  <tr key={t.id || i} style={{
+                    background: (t.pnl || 0) > 0 ? '#1a3a2a22' : '#3a1a1a22',
+                  }}>
+                    <td style={{ ...styles.td, fontWeight: 600 }}>{t.symbol}</td>
+                    <td style={styles.td}>{t.duration}m</td>
+                    <td style={{
+                      ...styles.td,
+                      color: t.direction === 'UP' ? 'var(--text)' : 'var(--down)',
+                      fontWeight: 600,
+                    }}>
+                      {t.direction}
+                    </td>
+                    <td style={{ ...styles.td, fontSize: 11, color: 'var(--text-secondary)', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                        title={t.strategy_name || t.strategy_id || '—'}>
+                      {t.strategy_name || t.strategy_id || '—'}
+                    </td>
+                    <td style={{ ...styles.td, fontFamily: 'var(--font-mono)' }}>
+                      ${t.entry_price?.toFixed?.(4) || '—'}
+                    </td>
+                    <td style={{ ...styles.td, fontSize: 11 }}>
+                      {toLocalShort(t.entry_ts)}
+                    </td>
+                    <td style={{ ...styles.td, fontFamily: 'var(--font-mono)' }}>
+                      ${t.exit_price?.toFixed?.(4) || '—'}
+                    </td>
+                    <td style={{ ...styles.td, fontSize: 11 }}>
+                      {toLocalShort(t.exit_ts)}
+                    </td>
+                    <td style={{
+                      ...styles.td,
+                      fontFamily: 'var(--font-mono)',
+                      fontWeight: 700,
+                      color: (t.pnl || 0) >= 0 ? 'var(--text)' : 'var(--down)',
+                    }}>
+                      {(t.pnl || 0) >= 0 ? '+' : ''}{t.pnl?.toFixed?.(2) || '0'} USDT
+                    </td>
+                    <td style={styles.td}>
+                      <span style={{
+                        padding: '2px 8px',
+                        borderRadius: 10,
+                        fontSize: 11,
+                        fontWeight: 700,
+                        background: (t.pnl || 0) > 0 ? 'var(--accent-dim)' : 'rgba(255,255,255,.03)',
+                        color: (t.pnl || 0) > 0 ? 'var(--text)' : 'var(--down)',
+                      }}>
+                        {(t.pnl || 0) > 0 ? '✅ WIN' : '❌ LOSE'}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {/* ═══════ 观测池（扩展）═══════ */}
@@ -773,7 +933,22 @@ export default function SimAccount() {
       {/* ═══════ 事件日志 ═══════ */}
       <div style={styles.section}>
         <h3 style={styles.sectionTitle}>📜 事件日志</h3>
-        <EventLog events={acc.events} />
+        <div style={styles.logBox}>
+          {(!acc.events || acc.events.length === 0) ? (
+            <div style={styles.noData}>暂无事件</div>
+          ) : (
+            acc.events.slice().reverse().slice(0, 30).map((e, i) => (
+              <div key={i} style={{
+                ...styles.logLine,
+                color: e.level === 'ERROR' ? 'var(--down)' : e.level === 'WARN' ? 'var(--text-secondary)' : 'var(--text-secondary)',
+              }}>
+                <span style={styles.logTs}>{e.ts?.slice(11, 19) || ''}</span>
+                <span>[{e.level}]</span>
+                <span>{e.msg}</span>
+              </div>
+            ))
+          )}
+        </div>
       </div>
 
     </div>
@@ -888,7 +1063,7 @@ function PositionSizeInput({ value, onChange }) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(String(value));
 
-  const presets = [3, 10, 50, 100, 500];
+  const presets = [50, 100, 200, 500, 1000];
 
   const apply = (val) => {
     const n = parseFloat(val);
